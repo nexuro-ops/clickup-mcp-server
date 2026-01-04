@@ -69,13 +69,26 @@ The following MCP tools are currently implemented:
   - Optional: `description`, `status`, `priority`, `assignees`, `due_date`, `time_estimate`, `tags`.
 - `clickup_update_task`: Update an existing task's properties.
   - Requires: `task_id`.
-  - Optional: Any writable `ClickUpTask` properties.
+  - Optional: `name`, `description`, `status`, `priority`, `assignees`, `due_date`, `time_estimate`, `tags`.
+- `clickup_get_task`: Get a single task by ID.
+  - Requires: `task_id`.
+- `clickup_get_tasks`: Get all tasks from a list with optional filtering.
+  - Requires: `list_id`.
+  - Optional: `archived`, `include_closed`, `order_by`, `reverse`, `subtasks`, `statuses`, `include_markdown_description`.
+- `clickup_delete_task`: Delete a task.
+  - Requires: `task_id`.
 
-### Team & List Management
+### Team Management
 
 - `clickup_get_teams`: Retrieve all accessible teams (Workspaces in ClickUp API v2).
+
+### List Management
+
 - `clickup_get_lists`: Get all lists in a specific folder.
   - Requires: `folder_id`.
+- `clickup_create_list`: Create a new List within a Folder or Space.
+  - Requires: `parent_id`, `parent_type` (folder or space), `name`.
+  - Optional: `content`, `due_date`, `due_date_time`, `priority`, `assignee`, `status`.
 
 ### Board Management
 
@@ -161,6 +174,78 @@ The following MCP tools are currently implemented:
 - `clickup_get_view_tasks`: Retrieves tasks belonging to a specific View.
   - Requires: `view_id`.
   - Optional: `page` (number: 0-indexed page number for pagination).
+
+### Comment Management
+
+- `clickup_create_comment`: Create a comment on a task.
+  - Requires: `task_id`, `comment_text`.
+  - Optional: `assignee` (user ID), `notify_all` (boolean, defaults to true).
+- `clickup_get_comments`: Get all comments on a task.
+  - Requires: `task_id`.
+- `clickup_update_comment`: Update a comment.
+  - Requires: `comment_id`, `comment_text`.
+  - Optional: `assignee`, `resolved` (boolean).
+- `clickup_delete_comment`: Delete a comment.
+  - Requires: `comment_id`.
+
+### Time Tracking
+
+- `clickup_create_time_entry`: Create a time entry for a task.
+  - Requires: `task_id`, `duration` (milliseconds).
+  - Optional: `start` (Unix milliseconds), `description`.
+- `clickup_get_time_entries`: Get all time entries for a task.
+  - Requires: `task_id`.
+- `clickup_update_time_entry`: Update a time entry.
+  - Requires: `team_id`, `timer_id`, `duration` (milliseconds).
+  - Optional: `start` (Unix milliseconds), `description`.
+- `clickup_delete_time_entry`: Delete a time entry.
+  - Requires: `team_id`, `timer_id`.
+- `clickup_start_timer`: Start a timer for a task.
+  - Requires: `team_id`, `task_id`.
+  - Optional: `description`.
+- `clickup_stop_timer`: Stop the currently running timer.
+  - Requires: `team_id`.
+- `clickup_get_current_timer`: Get the currently running timer.
+  - Requires: `team_id`.
+
+### Checklist Management
+
+- `clickup_create_checklist`: Create a checklist on a task.
+  - Requires: `task_id`, `name`.
+- `clickup_update_checklist`: Update a checklist.
+  - Requires: `checklist_id`.
+  - Optional: `name`, `position` (number).
+- `clickup_delete_checklist`: Delete a checklist.
+  - Requires: `checklist_id`.
+- `clickup_create_checklist_item`: Create an item in a checklist.
+  - Requires: `checklist_id`, `name`.
+  - Optional: `assignee` (user ID).
+- `clickup_update_checklist_item`: Update a checklist item.
+  - Requires: `checklist_id`, `checklist_item_id`.
+  - Optional: `name`, `resolved` (boolean), `assignee`, `parent` (for nesting).
+- `clickup_delete_checklist_item`: Delete a checklist item.
+  - Requires: `checklist_id`, `checklist_item_id`.
+
+### Task Dependencies & Links
+
+- `clickup_add_dependency`: Add a dependency relationship between tasks.
+  - Requires: `task_id`.
+  - Optional: `depends_on` (task ID this task depends on) OR `dependency_of` (task ID that depends on this task).
+- `clickup_delete_dependency`: Remove a dependency relationship.
+  - Requires: `task_id`.
+  - Optional: `depends_on` OR `dependency_of`.
+- `clickup_add_task_link`: Create a link between two tasks.
+  - Requires: `task_id`, `links_to` (task ID to link to).
+- `clickup_delete_task_link`: Remove a link between two tasks.
+  - Requires: `task_id`, `links_to`.
+
+### Attachment Management
+
+- `clickup_upload_attachment`: Upload a file attachment to a task.
+  - Requires: `task_id`, `file_path` (local file path).
+  - Optional: `file_name` (custom filename).
+- `clickup_delete_attachment`: Delete an attachment.
+  - Requires: `attachment_id`.
 
 ## Development
 
