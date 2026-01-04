@@ -40,8 +40,14 @@ import {
 import {
   createTaskTool,
   updateTaskTool,
+  getTaskTool,
+  getTasksTool,
+  deleteTaskTool,
   handleCreateTask,
   handleUpdateTask,
+  handleGetTask,
+  handleGetTasks,
+  handleDeleteTask,
 } from "./tools/task.tools.js";
 import {
   getSpacesTool,
@@ -112,6 +118,62 @@ import {
   handleCreateList,
 } from "./tools/list.tools.js";
 import { createBoardTool, handleCreateBoard } from "./tools/board.tools.js";
+import {
+  createCommentTool,
+  getCommentsTool,
+  updateCommentTool,
+  deleteCommentTool,
+  handleCreateComment,
+  handleGetComments,
+  handleUpdateComment,
+  handleDeleteComment,
+} from "./tools/comment.tools.js";
+import {
+  createTimeEntryTool,
+  getTimeEntriesTool,
+  updateTimeEntryTool,
+  deleteTimeEntryTool,
+  startTimerTool,
+  stopTimerTool,
+  getCurrentTimerTool,
+  handleCreateTimeEntry,
+  handleGetTimeEntries,
+  handleUpdateTimeEntry,
+  handleDeleteTimeEntry,
+  handleStartTimer,
+  handleStopTimer,
+  handleGetCurrentTimer,
+} from "./tools/time-tracking.tools.js";
+import {
+  createChecklistTool,
+  updateChecklistTool,
+  deleteChecklistTool,
+  createChecklistItemTool,
+  updateChecklistItemTool,
+  deleteChecklistItemTool,
+  handleCreateChecklist,
+  handleUpdateChecklist,
+  handleDeleteChecklist,
+  handleCreateChecklistItem,
+  handleUpdateChecklistItem,
+  handleDeleteChecklistItem,
+} from "./tools/checklist.tools.js";
+import {
+  addDependencyTool,
+  deleteDependencyTool,
+  addTaskLinkTool,
+  deleteTaskLinkTool,
+  handleAddDependency,
+  handleDeleteDependency,
+  handleAddTaskLink,
+  handleDeleteTaskLink,
+} from "./tools/dependency.tools.js";
+import {
+  uploadAttachmentTool,
+  deleteAttachmentTool,
+  handleUploadAttachment,
+  handleDeleteAttachment,
+} from "./tools/attachment.tools.js";
 
 // Tool Schemas - REMOVE taskSchema definition if only used in task.tools.ts
 const commonIdDescription =
@@ -134,37 +196,77 @@ async function main() {
     const serverOptions = {
       capabilities: {
         tools: {
+          // Task tools
           createTaskTool,
           updateTaskTool,
+          getTaskTool,
+          getTasksTool,
+          deleteTaskTool,
+          // Team tools
           getTeamsTool,
+          // List tools
           getListsTool,
+          createListTool,
+          // Board tools
           createBoardTool,
+          // Space tools
           getSpacesTool,
           createSpaceTool,
           getSpaceTool,
           updateSpaceTool,
           deleteSpaceTool,
+          // Folder tools
           getFoldersTool,
           createFolderTool,
           getFolderTool,
           updateFolderTool,
           deleteFolderTool,
+          // Custom field tools
           getCustomFieldsTool,
           setTaskCustomFieldValueTool,
           removeTaskCustomFieldValueTool,
+          // Doc tools
           searchDocsTool,
           createDocTool,
           getDocPagesTool,
           createDocPageTool,
           getDocPageContentTool,
           editDocPageContentTool,
+          // View tools
           getViewsTool,
           createViewTool,
           getViewDetailsTool,
           updateViewTool,
           deleteViewTool,
           getViewTasksTool,
-          createListTool,
+          // Comment tools
+          createCommentTool,
+          getCommentsTool,
+          updateCommentTool,
+          deleteCommentTool,
+          // Time tracking tools
+          createTimeEntryTool,
+          getTimeEntriesTool,
+          updateTimeEntryTool,
+          deleteTimeEntryTool,
+          startTimerTool,
+          stopTimerTool,
+          getCurrentTimerTool,
+          // Checklist tools
+          createChecklistTool,
+          updateChecklistTool,
+          deleteChecklistTool,
+          createChecklistItemTool,
+          updateChecklistItemTool,
+          deleteChecklistItemTool,
+          // Dependency tools
+          addDependencyTool,
+          deleteDependencyTool,
+          addTaskLinkTool,
+          deleteTaskLinkTool,
+          // Attachment tools
+          uploadAttachmentTool,
+          deleteAttachmentTool,
         },
       },
     };
@@ -196,11 +298,17 @@ async function main() {
         try {
           const args = request.params.arguments ?? {};
           switch (request.params.name) {
-            // ... (cases for tasks, spaces, folders, custom fields, docs, views) ...
+            // Task tools
             case createTaskTool.name:
               return await handleCreateTask(clickUpService, args);
             case updateTaskTool.name:
               return await handleUpdateTask(clickUpService, args);
+            case getTaskTool.name:
+              return await handleGetTask(clickUpService, args);
+            case getTasksTool.name:
+              return await handleGetTasks(clickUpService, args);
+            case deleteTaskTool.name:
+              return await handleDeleteTask(clickUpService, args);
             case getSpacesTool.name:
               return await handleGetSpaces(clickUpService, args);
             case createSpaceTool.name:
@@ -255,15 +363,68 @@ async function main() {
             case getViewTasksTool.name:
               return await handleGetViewTasks(clickUpService, args);
 
-            // --- Refactored Cases ---
+            // Team tools
             case getTeamsTool.name:
               return await handleGetTeams(clickUpService, args);
+            // List tools
             case getListsTool.name:
               return await handleGetLists(clickUpService, args);
-            case createBoardTool.name:
-              return await handleCreateBoard(clickUpService, args);
             case createListTool.name:
               return await handleCreateList(clickUpService, args);
+            // Board tools
+            case createBoardTool.name:
+              return await handleCreateBoard(clickUpService, args);
+            // Comment tools
+            case createCommentTool.name:
+              return await handleCreateComment(clickUpService, args);
+            case getCommentsTool.name:
+              return await handleGetComments(clickUpService, args);
+            case updateCommentTool.name:
+              return await handleUpdateComment(clickUpService, args);
+            case deleteCommentTool.name:
+              return await handleDeleteComment(clickUpService, args);
+            // Time tracking tools
+            case createTimeEntryTool.name:
+              return await handleCreateTimeEntry(clickUpService, args);
+            case getTimeEntriesTool.name:
+              return await handleGetTimeEntries(clickUpService, args);
+            case updateTimeEntryTool.name:
+              return await handleUpdateTimeEntry(clickUpService, args);
+            case deleteTimeEntryTool.name:
+              return await handleDeleteTimeEntry(clickUpService, args);
+            case startTimerTool.name:
+              return await handleStartTimer(clickUpService, args);
+            case stopTimerTool.name:
+              return await handleStopTimer(clickUpService, args);
+            case getCurrentTimerTool.name:
+              return await handleGetCurrentTimer(clickUpService, args);
+            // Checklist tools
+            case createChecklistTool.name:
+              return await handleCreateChecklist(clickUpService, args);
+            case updateChecklistTool.name:
+              return await handleUpdateChecklist(clickUpService, args);
+            case deleteChecklistTool.name:
+              return await handleDeleteChecklist(clickUpService, args);
+            case createChecklistItemTool.name:
+              return await handleCreateChecklistItem(clickUpService, args);
+            case updateChecklistItemTool.name:
+              return await handleUpdateChecklistItem(clickUpService, args);
+            case deleteChecklistItemTool.name:
+              return await handleDeleteChecklistItem(clickUpService, args);
+            // Dependency tools
+            case addDependencyTool.name:
+              return await handleAddDependency(clickUpService, args);
+            case deleteDependencyTool.name:
+              return await handleDeleteDependency(clickUpService, args);
+            case addTaskLinkTool.name:
+              return await handleAddTaskLink(clickUpService, args);
+            case deleteTaskLinkTool.name:
+              return await handleDeleteTaskLink(clickUpService, args);
+            // Attachment tools
+            case uploadAttachmentTool.name:
+              return await handleUploadAttachment(clickUpService, args);
+            case deleteAttachmentTool.name:
+              return await handleDeleteAttachment(clickUpService, args);
 
             default:
               throw new Error(`Unknown tool: ${request.params.name}`);
