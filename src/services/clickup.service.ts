@@ -53,6 +53,11 @@ import { CustomFieldService } from "./resources/custom-field.service.js";
 import { DocService } from "./resources/doc.service.js";
 import { ViewService } from "./resources/view.service.js";
 import { ListService } from "./resources/list.service.js";
+import { CommentService } from "./resources/comment.service.js";
+import { TimeTrackingService } from "./resources/time-tracking.service.js";
+import { ChecklistService } from "./resources/checklist.service.js";
+import { DependencyService } from "./resources/dependency.service.js";
+import { AttachmentService } from "./resources/attachment.service.js";
 
 // Remove TokenData interface if not used elsewhere (it was removed from types.ts)
 
@@ -70,7 +75,11 @@ export class ClickUpService {
   private _docService: DocService;
   private _viewService: ViewService;
   private _listService: ListService;
-  // Add other resource services here later
+  private _commentService: CommentService;
+  private _timeTrackingService: TimeTrackingService;
+  private _checklistService: ChecklistService;
+  private _dependencyService: DependencyService;
+  private _attachmentService: AttachmentService;
 
   constructor() {
     // Remove tokenStore initialization
@@ -139,7 +148,11 @@ export class ClickUpService {
     this._docService = new DocService(this.client);
     this._viewService = new ViewService(this.client);
     this._listService = new ListService(this.client);
-    // Instantiate other services here later
+    this._commentService = new CommentService(this.client);
+    this._timeTrackingService = new TimeTrackingService(this.client);
+    this._checklistService = new ChecklistService(this.client);
+    this._dependencyService = new DependencyService(this.client);
+    this._attachmentService = new AttachmentService(this.client);
 
     logger.info("ClickUpService initialized with all resource services.");
   }
@@ -166,7 +179,21 @@ export class ClickUpService {
   public get listService(): ListService {
     return this._listService;
   }
-  // Add other accessors here later
+  public get commentService(): CommentService {
+    return this._commentService;
+  }
+  public get timeTrackingService(): TimeTrackingService {
+    return this._timeTrackingService;
+  }
+  public get checklistService(): ChecklistService {
+    return this._checklistService;
+  }
+  public get dependencyService(): DependencyService {
+    return this._dependencyService;
+  }
+  public get attachmentService(): AttachmentService {
+    return this._attachmentService;
+  }
 
   // Remove getToken method
   // private async getToken(...) { ... }

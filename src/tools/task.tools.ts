@@ -131,7 +131,7 @@ export const updateTaskTool: Tool = {
         properties: {
           id: { type: "string" },
           name: { type: "string" },
-          status: { 
+          status: {
             type: "object",
             properties: {
               id: { type: "string" },
@@ -147,6 +147,112 @@ export const updateTaskTool: Tool = {
       }
     },
     description: "An object containing the updated task object in the 'task' property.",
+  },
+};
+
+export const getTaskTool: Tool = {
+  name: "clickup_get_task",
+  description: "Get a single task by ID from ClickUp",
+  inputSchema: {
+    type: "object",
+    properties: {
+      task_id: {
+        type: "string",
+        description: "The unique string identifier of the ClickUp task to retrieve.",
+      },
+    },
+    required: ["task_id"],
+  },
+  outputSchema: {
+    type: "object",
+    properties: {
+      task: {
+        type: "object",
+        additionalProperties: true,
+      },
+    },
+    description: "An object containing the task details.",
+  },
+};
+
+export const getTasksTool: Tool = {
+  name: "clickup_get_tasks",
+  description: "Get all tasks from a list in ClickUp with optional filtering",
+  inputSchema: {
+    type: "object",
+    properties: {
+      list_id: {
+        type: "string",
+        description: "The unique string identifier of the ClickUp list.",
+      },
+      archived: {
+        type: "boolean",
+        description: "Include archived tasks (default: false).",
+      },
+      include_closed: {
+        type: "boolean",
+        description: "Include tasks with closed statuses (default: false).",
+      },
+      order_by: {
+        type: "string",
+        description: "Field to order tasks by (e.g., 'created', 'updated', 'due_date').",
+      },
+      reverse: {
+        type: "boolean",
+        description: "Reverse the order (default: false).",
+      },
+      subtasks: {
+        type: "boolean",
+        description: "Include subtasks (default: false).",
+      },
+      statuses: {
+        type: "array",
+        items: { type: "string" },
+        description: "Filter by status names.",
+      },
+      include_markdown_description: {
+        type: "boolean",
+        description: "Include markdown description (default: false).",
+      },
+    },
+    required: ["list_id"],
+  },
+  outputSchema: {
+    type: "object",
+    properties: {
+      tasks: {
+        type: "array",
+        items: {
+          type: "object",
+          additionalProperties: true,
+        },
+      },
+    },
+    description: "An object containing an array of tasks.",
+  },
+};
+
+export const deleteTaskTool: Tool = {
+  name: "clickup_delete_task",
+  description: "Delete a task from ClickUp",
+  inputSchema: {
+    type: "object",
+    properties: {
+      task_id: {
+        type: "string",
+        description: "The unique string identifier of the ClickUp task to delete.",
+      },
+    },
+    required: ["task_id"],
+  },
+  outputSchema: {
+    type: "object",
+    properties: {
+      success: {
+        type: "boolean",
+      },
+    },
+    description: "Confirmation of task deletion.",
   },
 };
 
@@ -301,5 +407,98 @@ export async function handleUpdateTask(
   } catch (error) {
     logger.error(`Error in ${updateTaskTool.name}:`, error);
     throw error instanceof Error ? error : new Error("Failed to update task");
+  }
+}
+
+export async function handleGetTask(
+  clickUpService: ClickUpService,
+  args: Record<string, unknown>,
+) {
+  const { task_id } = args as { task_id: string };
+
+  if (!task_id || typeof task_id !== "string") {
+    throw new Error("Task ID is required and must be a string.");
+  }
+
+  logger.info(`Handling tool call: ${getTaskTool.name} for task ${task_id}`);
+  try {
+    const response = await clickUpService.taskService.getTask(task_id);
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(response, null, 2),
+        },
+      ],
+      structuredContent: { task: response },
+    };
+  } catch (error) {
+    logger.error(`Error in ${getTaskTool.name}:`, error);
+    throw error instanceof Error ? error : new Error("Failed to get task");
+  }
+}
+
+export async function handleGetTasks(
+  clickUpService: ClickUpService,
+  args: Record<string, unknown>,
+) {
+  const { list_id, ...params } = args as {
+    list_id: string;
+    archived?: boolean;
+    include_closed?: boolean;
+    order_by?: string;
+    reverse?: boolean;
+    subtasks?: boolean;
+    statuses?: string[];
+    include_markdown_description?: boolean;
+  };
+
+  if (!list_id || typeof list_id !== "string") {
+    throw new Error("List ID is required and must be a string.");
+  }
+
+  logger.info(`Handling tool call: ${getTasksTool.name} for list ${list_id}`);
+  try {
+    const response = await clickUpService.taskService.getTasks(list_id, params);
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(response, null, 2),
+        },
+      ],
+      structuredContent: { tasks: response.tasks || [] },
+    };
+  } catch (error) {
+    logger.error(`Error in ${getTasksTool.name}:`, error);
+    throw error instanceof Error ? error : new Error("Failed to get tasks");
+  }
+}
+
+export async function handleDeleteTask(
+  clickUpService: ClickUpService,
+  args: Record<string, unknown>,
+) {
+  const { task_id } = args as { task_id: string };
+
+  if (!task_id || typeof task_id !== "string") {
+    throw new Error("Task ID is required and must be a string.");
+  }
+
+  logger.info(`Handling tool call: ${deleteTaskTool.name} for task ${task_id}`);
+  try {
+    await clickUpService.taskService.deleteTask(task_id);
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Task ${task_id} deleted successfully`,
+        },
+      ],
+      structuredContent: { success: true },
+    };
+  } catch (error) {
+    logger.error(`Error in ${deleteTaskTool.name}:`, error);
+    throw error instanceof Error ? error : new Error("Failed to delete task");
   }
 }

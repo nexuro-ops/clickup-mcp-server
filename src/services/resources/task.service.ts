@@ -61,4 +61,64 @@ export class TaskService {
       throw new Error("Failed to update task in ClickUp");
     }
   }
+
+  async getTask(taskId: string): Promise<any> {
+    logger.debug(`Getting task ${taskId}`);
+    try {
+      const response = await this.client.get<any>(`/v2/task/${taskId}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        logger.error(`Axios error getting task ${taskId}: ${error.message}`, {
+          status: error.response?.status,
+          data: error.response?.data,
+          url: error.config?.url,
+        });
+      } else if (error instanceof Error) {
+        logger.error(`Generic error getting task ${taskId}: ${error.message}`);
+      }
+      throw new Error("Failed to get task from ClickUp");
+    }
+  }
+
+  async getTasks(listId: string, params?: any): Promise<any> {
+    logger.debug(`Getting tasks for list ${listId}`);
+    try {
+      const response = await this.client.get<any>(
+        `/v2/list/${listId}/task`,
+        { params },
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        logger.error(`Axios error getting tasks for list ${listId}: ${error.message}`, {
+          status: error.response?.status,
+          data: error.response?.data,
+          url: error.config?.url,
+        });
+      } else if (error instanceof Error) {
+        logger.error(`Generic error getting tasks for list ${listId}: ${error.message}`);
+      }
+      throw new Error("Failed to get tasks from ClickUp");
+    }
+  }
+
+  async deleteTask(taskId: string): Promise<any> {
+    logger.debug(`Deleting task ${taskId}`);
+    try {
+      const response = await this.client.delete<any>(`/v2/task/${taskId}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        logger.error(`Axios error deleting task ${taskId}: ${error.message}`, {
+          status: error.response?.status,
+          data: error.response?.data,
+          url: error.config?.url,
+        });
+      } else if (error instanceof Error) {
+        logger.error(`Generic error deleting task ${taskId}: ${error.message}`);
+      }
+      throw new Error("Failed to delete task from ClickUp");
+    }
+  }
 }
