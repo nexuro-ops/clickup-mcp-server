@@ -174,6 +174,44 @@ import {
   handleUploadAttachment,
   handleDeleteAttachment,
 } from "./tools/attachment.tools.js";
+import {
+  getChannelsTool,
+  createChannelTool,
+  getChannelTool,
+  updateChannelTool,
+  deleteChannelTool,
+  getChannelFollowersTool,
+  getChannelMembersTool,
+  createMessageTool,
+  getMessagesTool,
+  updateMessageTool,
+  deleteMessageTool,
+  createDirectMessageTool,
+  createMessageReactionTool,
+  getMessageReactionsTool,
+  deleteMessageReactionTool,
+  createReplyTool,
+  getRepliesTool,
+  getMentionableUsersTool,
+  handleGetChannels,
+  handleCreateChannel,
+  handleGetChannel,
+  handleUpdateChannel,
+  handleDeleteChannel,
+  handleGetChannelFollowers,
+  handleGetChannelMembers,
+  handleCreateMessage,
+  handleGetMessages,
+  handleUpdateMessage,
+  handleDeleteMessage,
+  handleCreateDirectMessage,
+  handleCreateMessageReaction,
+  handleGetMessageReactions,
+  handleDeleteMessageReaction,
+  handleCreateReply,
+  handleGetReplies,
+  handleGetMentionableUsers,
+} from "./tools/chat.tools.js";
 
 // Tool Schemas - REMOVE taskSchema definition if only used in task.tools.ts
 const commonIdDescription =
@@ -267,6 +305,25 @@ async function main() {
           // Attachment tools
           uploadAttachmentTool,
           deleteAttachmentTool,
+          // Chat tools
+          getChannelsTool,
+          createChannelTool,
+          getChannelTool,
+          updateChannelTool,
+          deleteChannelTool,
+          getChannelFollowersTool,
+          getChannelMembersTool,
+          createMessageTool,
+          getMessagesTool,
+          updateMessageTool,
+          deleteMessageTool,
+          createDirectMessageTool,
+          createMessageReactionTool,
+          getMessageReactionsTool,
+          deleteMessageReactionTool,
+          createReplyTool,
+          getRepliesTool,
+          getMentionableUsersTool,
         },
       },
     };
@@ -425,6 +482,43 @@ async function main() {
               return await handleUploadAttachment(clickUpService, args);
             case deleteAttachmentTool.name:
               return await handleDeleteAttachment(clickUpService, args);
+            // Chat tools
+            case getChannelsTool.name:
+              return await handleGetChannels(clickUpService, args);
+            case createChannelTool.name:
+              return await handleCreateChannel(clickUpService, args);
+            case getChannelTool.name:
+              return await handleGetChannel(clickUpService, args);
+            case updateChannelTool.name:
+              return await handleUpdateChannel(clickUpService, args);
+            case deleteChannelTool.name:
+              return await handleDeleteChannel(clickUpService, args);
+            case getChannelFollowersTool.name:
+              return await handleGetChannelFollowers(clickUpService, args);
+            case getChannelMembersTool.name:
+              return await handleGetChannelMembers(clickUpService, args);
+            case createMessageTool.name:
+              return await handleCreateMessage(clickUpService, args);
+            case getMessagesTool.name:
+              return await handleGetMessages(clickUpService, args);
+            case updateMessageTool.name:
+              return await handleUpdateMessage(clickUpService, args);
+            case deleteMessageTool.name:
+              return await handleDeleteMessage(clickUpService, args);
+            case createDirectMessageTool.name:
+              return await handleCreateDirectMessage(clickUpService, args);
+            case createMessageReactionTool.name:
+              return await handleCreateMessageReaction(clickUpService, args);
+            case getMessageReactionsTool.name:
+              return await handleGetMessageReactions(clickUpService, args);
+            case deleteMessageReactionTool.name:
+              return await handleDeleteMessageReaction(clickUpService, args);
+            case createReplyTool.name:
+              return await handleCreateReply(clickUpService, args);
+            case getRepliesTool.name:
+              return await handleGetReplies(clickUpService, args);
+            case getMentionableUsersTool.name:
+              return await handleGetMentionableUsers(clickUpService, args);
 
             default:
               throw new Error(`Unknown tool: ${request.params.name}`);
