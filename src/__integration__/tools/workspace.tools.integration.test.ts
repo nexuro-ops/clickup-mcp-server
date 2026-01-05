@@ -1,14 +1,15 @@
 import "../../__integration__/setup/integration.setup.js";
-import { ClickUpService } from "../../services/clickup.service.js";
 import { handleGetSpaces, handleCreateSpace } from "../../tools/space.tools.js";
 import { testCleanup } from "../setup/clickup.cleanup.js";
 import { createTestEntity } from "../setup/integration.setup.js";
 
 describe("Workspace Tools - Tests d'Intégration", () => {
-  let clickUpService: ClickUpService;
+  let clickUpService: any;
   let testWorkspaceId: string;
 
   beforeAll(async () => {
+    // Require ClickUpService AFTER modules have been reset by the integration setup
+    const { ClickUpService } = require("../../services/clickup.service.js");
     clickUpService = new ClickUpService();
     
     // Récupérer les équipes pour obtenir un workspace
