@@ -2,16 +2,17 @@ import { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { ClickUpService } from "../services/clickup.service.js";
 import { logger } from "../logger.js";
 
-// Channel tools
+// Tool Definitions
+
 export const getChannelsTool: Tool = {
-  name: "clickup_get_channels",
-  description: "Get all chat channels in a workspace",
+  name: "clickup_get_chat_channels",
+  description: "Get all chat channels in a ClickUp workspace",
   inputSchema: {
     type: "object",
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
+        description: "The unique identifier of the workspace.",
       },
     },
     required: ["workspace_id"],
@@ -27,23 +28,23 @@ export const getChannelsTool: Tool = {
         },
       },
     },
-    description: "An array of channel objects.",
+    description: "An array of chat channel objects.",
   },
 };
 
 export const createChannelTool: Tool = {
   name: "clickup_create_chat_channel",
-  description: "Create a new chat channel in a workspace",
+  description: "Create a new chat channel in a ClickUp workspace",
   inputSchema: {
     type: "object",
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
+        description: "The unique identifier of the workspace.",
       },
       name: {
         type: "string",
-        description: "Name of the channel.",
+        description: "The name of the channel.",
       },
       description: {
         type: "string",
@@ -51,7 +52,7 @@ export const createChannelTool: Tool = {
       },
       private: {
         type: "boolean",
-        description: "Optional: Whether the channel is private.",
+        description: "Optional: Whether the channel is private (default: false).",
       },
     },
     required: ["workspace_id", "name"],
@@ -64,7 +65,7 @@ export const createChannelTool: Tool = {
         additionalProperties: true,
       },
     },
-    description: "The created channel object.",
+    description: "The created chat channel object.",
   },
 };
 
@@ -76,7 +77,7 @@ export const getChannelTool: Tool = {
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
+        description: "The unique identifier of the workspace.",
       },
       channel_id: {
         type: "string",
@@ -93,7 +94,7 @@ export const getChannelTool: Tool = {
         additionalProperties: true,
       },
     },
-    description: "The channel object.",
+    description: "The chat channel object.",
   },
 };
 
@@ -105,7 +106,7 @@ export const updateChannelTool: Tool = {
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
+        description: "The unique identifier of the workspace.",
       },
       channel_id: {
         type: "string",
@@ -113,15 +114,15 @@ export const updateChannelTool: Tool = {
       },
       name: {
         type: "string",
-        description: "Optional: New name for the channel.",
+        description: "Optional: New channel name.",
       },
       description: {
         type: "string",
-        description: "Optional: New description for the channel.",
+        description: "Optional: New channel description.",
       },
       private: {
         type: "boolean",
-        description: "Optional: Set channel privacy.",
+        description: "Optional: Update channel privacy status.",
       },
     },
     required: ["workspace_id", "channel_id"],
@@ -134,7 +135,7 @@ export const updateChannelTool: Tool = {
         additionalProperties: true,
       },
     },
-    description: "The updated channel object.",
+    description: "The updated chat channel object.",
   },
 };
 
@@ -146,7 +147,7 @@ export const deleteChannelTool: Tool = {
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
+        description: "The unique identifier of the workspace.",
       },
       channel_id: {
         type: "string",
@@ -174,7 +175,7 @@ export const getChannelFollowersTool: Tool = {
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
+        description: "The unique identifier of the workspace.",
       },
       channel_id: {
         type: "string",
@@ -194,7 +195,7 @@ export const getChannelFollowersTool: Tool = {
         },
       },
     },
-    description: "An array of user followers.",
+    description: "An array of user objects who follow the channel.",
   },
 };
 
@@ -206,7 +207,7 @@ export const getChannelMembersTool: Tool = {
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
+        description: "The unique identifier of the workspace.",
       },
       channel_id: {
         type: "string",
@@ -226,20 +227,19 @@ export const getChannelMembersTool: Tool = {
         },
       },
     },
-    description: "An array of channel members.",
+    description: "An array of user objects who are members of the channel.",
   },
 };
 
-// Message tools
 export const createMessageTool: Tool = {
   name: "clickup_create_chat_message",
-  description: "Create a message in a chat channel",
+  description: "Send a message to a chat channel",
   inputSchema: {
     type: "object",
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
+        description: "The unique identifier of the workspace.",
       },
       channel_id: {
         type: "string",
@@ -272,7 +272,7 @@ export const getMessagesTool: Tool = {
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
+        description: "The unique identifier of the workspace.",
       },
       channel_id: {
         type: "string",
@@ -280,11 +280,11 @@ export const getMessagesTool: Tool = {
       },
       limit: {
         type: "number",
-        description: "Optional: Maximum number of messages to retrieve.",
+        description: "Optional: Number of messages to retrieve (default: 50).",
       },
       offset: {
         type: "number",
-        description: "Optional: Offset for pagination.",
+        description: "Optional: Offset for pagination (default: 0).",
       },
     },
     required: ["workspace_id", "channel_id"],
@@ -306,13 +306,13 @@ export const getMessagesTool: Tool = {
 
 export const updateMessageTool: Tool = {
   name: "clickup_update_chat_message",
-  description: "Update a message in a chat channel",
+  description: "Update a chat message",
   inputSchema: {
     type: "object",
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
+        description: "The unique identifier of the workspace.",
       },
       channel_id: {
         type: "string",
@@ -343,13 +343,13 @@ export const updateMessageTool: Tool = {
 
 export const deleteMessageTool: Tool = {
   name: "clickup_delete_chat_message",
-  description: "Delete a message from a chat channel",
+  description: "Delete a chat message",
   inputSchema: {
     type: "object",
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
+        description: "The unique identifier of the workspace.",
       },
       channel_id: {
         type: "string",
@@ -373,20 +373,19 @@ export const deleteMessageTool: Tool = {
   },
 };
 
-// Direct message tool
 export const createDirectMessageTool: Tool = {
   name: "clickup_create_direct_message",
-  description: "Create a direct message in a workspace",
+  description: "Send a direct message to a user",
   inputSchema: {
     type: "object",
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
+        description: "The unique identifier of the workspace.",
       },
       user_id: {
         type: "string",
-        description: "The ID of the user to send a direct message to.",
+        description: "The unique identifier of the recipient user.",
       },
       text: {
         type: "string",
@@ -407,20 +406,15 @@ export const createDirectMessageTool: Tool = {
   },
 };
 
-// Message reaction tools
 export const createMessageReactionTool: Tool = {
   name: "clickup_create_message_reaction",
-  description: "Create a reaction to a message",
+  description: "Add a reaction (emoji) to a message",
   inputSchema: {
     type: "object",
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
-      },
-      channel_id: {
-        type: "string",
-        description: "The unique identifier of the channel.",
+        description: "The unique identifier of the workspace.",
       },
       message_id: {
         type: "string",
@@ -431,7 +425,7 @@ export const createMessageReactionTool: Tool = {
         description: "The emoji reaction (e.g., 'thumbsup', 'heart').",
       },
     },
-    required: ["workspace_id", "channel_id", "message_id", "emoji"],
+    required: ["workspace_id", "message_id", "emoji"],
   },
   outputSchema: {
     type: "object",
@@ -453,18 +447,14 @@ export const getMessageReactionsTool: Tool = {
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
-      },
-      channel_id: {
-        type: "string",
-        description: "The unique identifier of the channel.",
+        description: "The unique identifier of the workspace.",
       },
       message_id: {
         type: "string",
         description: "The unique identifier of the message.",
       },
     },
-    required: ["workspace_id", "channel_id", "message_id"],
+    required: ["workspace_id", "message_id"],
   },
   outputSchema: {
     type: "object",
@@ -483,17 +473,13 @@ export const getMessageReactionsTool: Tool = {
 
 export const deleteMessageReactionTool: Tool = {
   name: "clickup_delete_message_reaction",
-  description: "Delete a reaction from a message",
+  description: "Remove a reaction from a message",
   inputSchema: {
     type: "object",
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
-      },
-      channel_id: {
-        type: "string",
-        description: "The unique identifier of the channel.",
+        description: "The unique identifier of the workspace.",
       },
       message_id: {
         type: "string",
@@ -504,7 +490,7 @@ export const deleteMessageReactionTool: Tool = {
         description: "The unique identifier of the reaction.",
       },
     },
-    required: ["workspace_id", "channel_id", "message_id", "reaction_id"],
+    required: ["workspace_id", "message_id", "reaction_id"],
   },
   outputSchema: {
     type: "object",
@@ -517,20 +503,15 @@ export const deleteMessageReactionTool: Tool = {
   },
 };
 
-// Reply tools
 export const createReplyTool: Tool = {
-  name: "clickup_create_chat_reply",
-  description: "Create a reply to a message in a chat channel",
+  name: "clickup_create_message_reply",
+  description: "Reply to a message in a chat channel",
   inputSchema: {
     type: "object",
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
-      },
-      channel_id: {
-        type: "string",
-        description: "The unique identifier of the channel.",
+        description: "The unique identifier of the workspace.",
       },
       message_id: {
         type: "string",
@@ -541,7 +522,7 @@ export const createReplyTool: Tool = {
         description: "The reply text content.",
       },
     },
-    required: ["workspace_id", "channel_id", "message_id", "text"],
+    required: ["workspace_id", "message_id", "text"],
   },
   outputSchema: {
     type: "object",
@@ -556,18 +537,14 @@ export const createReplyTool: Tool = {
 };
 
 export const getRepliesTool: Tool = {
-  name: "clickup_get_chat_replies",
-  description: "Get replies to a message in a chat channel",
+  name: "clickup_get_message_replies",
+  description: "Get all replies to a message",
   inputSchema: {
     type: "object",
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
-      },
-      channel_id: {
-        type: "string",
-        description: "The unique identifier of the channel.",
+        description: "The unique identifier of the workspace.",
       },
       message_id: {
         type: "string",
@@ -575,14 +552,14 @@ export const getRepliesTool: Tool = {
       },
       limit: {
         type: "number",
-        description: "Optional: Maximum number of replies to retrieve.",
+        description: "Optional: Number of replies to retrieve (default: 50).",
       },
       offset: {
         type: "number",
-        description: "Optional: Offset for pagination.",
+        description: "Optional: Offset for pagination (default: 0).",
       },
     },
-    required: ["workspace_id", "channel_id", "message_id"],
+    required: ["workspace_id", "message_id"],
   },
   outputSchema: {
     type: "object",
@@ -599,16 +576,15 @@ export const getRepliesTool: Tool = {
   },
 };
 
-// User tools
 export const getMentionableUsersTool: Tool = {
   name: "clickup_get_mentionable_users",
-  description: "Get users that can be mentioned in chat for a workspace",
+  description: "Get list of users that can be mentioned in chat",
   inputSchema: {
     type: "object",
     properties: {
       workspace_id: {
         type: "string",
-        description: "The ID of the Workspace (Team) to operate on.",
+        description: "The unique identifier of the workspace.",
       },
     },
     required: ["workspace_id"],
@@ -624,11 +600,11 @@ export const getMentionableUsersTool: Tool = {
         },
       },
     },
-    description: "An array of user objects.",
+    description: "An array of user objects that can be mentioned.",
   },
 };
 
-// Handler functions
+// Handler Functions
 
 export async function handleGetChannels(
   clickUpService: ClickUpService,
@@ -677,7 +653,7 @@ export async function handleCreateChannel(
   }
 
   const channelData: any = { name };
-  if (description) channelData.description = description;
+  if (description !== undefined) channelData.description = description;
   if (isPrivate !== undefined) channelData.private = isPrivate;
 
   logger.info(`Handling tool call: ${createChannelTool.name}`);
@@ -736,9 +712,7 @@ export async function handleGetChannel(
     };
   } catch (error) {
     logger.error(`Error in ${getChannelTool.name}:`, error);
-    throw error instanceof Error
-      ? error
-      : new Error("Failed to get channel");
+    throw error instanceof Error ? error : new Error("Failed to get channel");
   }
 }
 
@@ -814,7 +788,7 @@ export async function handleDeleteChannel(
       content: [
         {
           type: "text",
-          text: `Channel ${channel_id} deleted successfully`,
+          text: `Channel ${channel_id} deleted successfully.`,
         },
       ],
       structuredContent: { success: true },
@@ -967,16 +941,16 @@ export async function handleGetMessages(
     throw new Error("Channel ID is required and must be a string.");
   }
 
-  const params: any = {};
-  if (limit !== undefined) params.limit = limit;
-  if (offset !== undefined) params.offset = offset;
+  const pagination: any = {};
+  if (limit !== undefined) pagination.limit = limit;
+  if (offset !== undefined) pagination.offset = offset;
 
   logger.info(`Handling tool call: ${getMessagesTool.name}`);
   try {
     const response = await clickUpService.chatService.getMessages(
       workspace_id,
       channel_id,
-      params,
+      pagination,
     );
     return {
       content: [
@@ -989,9 +963,7 @@ export async function handleGetMessages(
     };
   } catch (error) {
     logger.error(`Error in ${getMessagesTool.name}:`, error);
-    throw error instanceof Error
-      ? error
-      : new Error("Failed to get messages");
+    throw error instanceof Error ? error : new Error("Failed to get messages");
   }
 }
 
@@ -1075,7 +1047,7 @@ export async function handleDeleteMessage(
       content: [
         {
           type: "text",
-          text: `Message ${message_id} deleted successfully`,
+          text: `Message ${message_id} deleted successfully.`,
         },
       ],
       structuredContent: { success: true },
@@ -1135,18 +1107,14 @@ export async function handleCreateMessageReaction(
   clickUpService: ClickUpService,
   args: Record<string, unknown>,
 ) {
-  const { workspace_id, channel_id, message_id, emoji } = args as {
+  const { workspace_id, message_id, emoji } = args as {
     workspace_id: string;
-    channel_id: string;
     message_id: string;
     emoji: string;
   };
 
   if (!workspace_id || typeof workspace_id !== "string") {
     throw new Error("Workspace ID is required and must be a string.");
-  }
-  if (!channel_id || typeof channel_id !== "string") {
-    throw new Error("Channel ID is required and must be a string.");
   }
   if (!message_id || typeof message_id !== "string") {
     throw new Error("Message ID is required and must be a string.");
@@ -1159,7 +1127,6 @@ export async function handleCreateMessageReaction(
   try {
     const response = await clickUpService.chatService.createMessageReaction(
       workspace_id,
-      channel_id,
       message_id,
       { emoji },
     );
@@ -1184,17 +1151,13 @@ export async function handleGetMessageReactions(
   clickUpService: ClickUpService,
   args: Record<string, unknown>,
 ) {
-  const { workspace_id, channel_id, message_id } = args as {
+  const { workspace_id, message_id } = args as {
     workspace_id: string;
-    channel_id: string;
     message_id: string;
   };
 
   if (!workspace_id || typeof workspace_id !== "string") {
     throw new Error("Workspace ID is required and must be a string.");
-  }
-  if (!channel_id || typeof channel_id !== "string") {
-    throw new Error("Channel ID is required and must be a string.");
   }
   if (!message_id || typeof message_id !== "string") {
     throw new Error("Message ID is required and must be a string.");
@@ -1204,7 +1167,6 @@ export async function handleGetMessageReactions(
   try {
     const response = await clickUpService.chatService.getMessageReactions(
       workspace_id,
-      channel_id,
       message_id,
     );
     return {
@@ -1228,18 +1190,14 @@ export async function handleDeleteMessageReaction(
   clickUpService: ClickUpService,
   args: Record<string, unknown>,
 ) {
-  const { workspace_id, channel_id, message_id, reaction_id } = args as {
+  const { workspace_id, message_id, reaction_id } = args as {
     workspace_id: string;
-    channel_id: string;
     message_id: string;
     reaction_id: string;
   };
 
   if (!workspace_id || typeof workspace_id !== "string") {
     throw new Error("Workspace ID is required and must be a string.");
-  }
-  if (!channel_id || typeof channel_id !== "string") {
-    throw new Error("Channel ID is required and must be a string.");
   }
   if (!message_id || typeof message_id !== "string") {
     throw new Error("Message ID is required and must be a string.");
@@ -1252,7 +1210,6 @@ export async function handleDeleteMessageReaction(
   try {
     await clickUpService.chatService.deleteMessageReaction(
       workspace_id,
-      channel_id,
       message_id,
       reaction_id,
     );
@@ -1260,7 +1217,7 @@ export async function handleDeleteMessageReaction(
       content: [
         {
           type: "text",
-          text: `Reaction ${reaction_id} deleted successfully`,
+          text: `Reaction ${reaction_id} deleted successfully.`,
         },
       ],
       structuredContent: { success: true },
@@ -1277,18 +1234,14 @@ export async function handleCreateReply(
   clickUpService: ClickUpService,
   args: Record<string, unknown>,
 ) {
-  const { workspace_id, channel_id, message_id, text } = args as {
+  const { workspace_id, message_id, text } = args as {
     workspace_id: string;
-    channel_id: string;
     message_id: string;
     text: string;
   };
 
   if (!workspace_id || typeof workspace_id !== "string") {
     throw new Error("Workspace ID is required and must be a string.");
-  }
-  if (!channel_id || typeof channel_id !== "string") {
-    throw new Error("Channel ID is required and must be a string.");
   }
   if (!message_id || typeof message_id !== "string") {
     throw new Error("Message ID is required and must be a string.");
@@ -1301,7 +1254,6 @@ export async function handleCreateReply(
   try {
     const response = await clickUpService.chatService.createReply(
       workspace_id,
-      channel_id,
       message_id,
       { text },
     );
@@ -1316,9 +1268,7 @@ export async function handleCreateReply(
     };
   } catch (error) {
     logger.error(`Error in ${createReplyTool.name}:`, error);
-    throw error instanceof Error
-      ? error
-      : new Error("Failed to create reply");
+    throw error instanceof Error ? error : new Error("Failed to create reply");
   }
 }
 
@@ -1326,9 +1276,8 @@ export async function handleGetReplies(
   clickUpService: ClickUpService,
   args: Record<string, unknown>,
 ) {
-  const { workspace_id, channel_id, message_id, limit, offset } = args as {
+  const { workspace_id, message_id, limit, offset } = args as {
     workspace_id: string;
-    channel_id: string;
     message_id: string;
     limit?: number;
     offset?: number;
@@ -1337,24 +1286,20 @@ export async function handleGetReplies(
   if (!workspace_id || typeof workspace_id !== "string") {
     throw new Error("Workspace ID is required and must be a string.");
   }
-  if (!channel_id || typeof channel_id !== "string") {
-    throw new Error("Channel ID is required and must be a string.");
-  }
   if (!message_id || typeof message_id !== "string") {
     throw new Error("Message ID is required and must be a string.");
   }
 
-  const params: any = {};
-  if (limit !== undefined) params.limit = limit;
-  if (offset !== undefined) params.offset = offset;
+  const pagination: any = {};
+  if (limit !== undefined) pagination.limit = limit;
+  if (offset !== undefined) pagination.offset = offset;
 
   logger.info(`Handling tool call: ${getRepliesTool.name}`);
   try {
     const response = await clickUpService.chatService.getReplies(
       workspace_id,
-      channel_id,
       message_id,
-      params,
+      pagination,
     );
     return {
       content: [
@@ -1367,9 +1312,7 @@ export async function handleGetReplies(
     };
   } catch (error) {
     logger.error(`Error in ${getRepliesTool.name}:`, error);
-    throw error instanceof Error
-      ? error
-      : new Error("Failed to get replies");
+    throw error instanceof Error ? error : new Error("Failed to get replies");
   }
 }
 

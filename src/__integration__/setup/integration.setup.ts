@@ -9,7 +9,7 @@ dotenv.config({
 // Configuration globale pour les tests d'intégration
 export const INTEGRATION_CONFIG = {
   // Token ClickUp pour les tests
-  clickupToken: process.env.CLICKUP_PERSONAL_TOKEN_INTEGRATION || 
+  clickupToken: process.env.CLICKUP_PERSONAL_TOKEN_INTEGRATION ||
                 process.env.CLICKUP_PERSONAL_TOKEN ||
                 "<EXPOSED_API_KEY_REMOVED>",
   
@@ -34,10 +34,20 @@ beforeAll(() => {
       "Token ClickUp manquant ! Définissez CLICKUP_PERSONAL_TOKEN ou CLICKUP_PERSONAL_TOKEN_INTEGRATION"
     );
   }
-  
+
+  // Set the real integration token in the environment for any modules that will be loaded
+  process.env.CLICKUP_PERSONAL_TOKEN = INTEGRATION_CONFIG.clickupToken;
+
+  if (INTEGRATION_CONFIG.verbose) {
+    console.log("[Integration Setup] Token set to:", process.env.CLICKUP_PERSONAL_TOKEN.substring(0, 20) + "...");
+  }
+
+  // Clear the module cache using Jest's resetModules to reload all modules with the correct token
+  jest.resetModules();
+
   // Configuration Jest pour les tests d'intégration
   jest.setTimeout(INTEGRATION_CONFIG.apiTimeout);
-  
+
   if (INTEGRATION_CONFIG.verbose) {
     console.log("🚀 Configuration tests d'intégration :");
     console.log(`  - Token: ${INTEGRATION_CONFIG.clickupToken.substring(0, 20)}...`);
