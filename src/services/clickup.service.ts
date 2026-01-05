@@ -58,6 +58,7 @@ import { TimeTrackingService } from "./resources/time-tracking.service.js";
 import { ChecklistService } from "./resources/checklist.service.js";
 import { DependencyService } from "./resources/dependency.service.js";
 import { AttachmentService } from "./resources/attachment.service.js";
+import { ChatService } from "./resources/chat.service.js";
 
 // Remove TokenData interface if not used elsewhere (it was removed from types.ts)
 
@@ -80,6 +81,7 @@ export class ClickUpService {
   private _checklistService: ChecklistService;
   private _dependencyService: DependencyService;
   private _attachmentService: AttachmentService;
+  private _chatService: ChatService;
 
   constructor() {
     // Remove tokenStore initialization
@@ -153,6 +155,7 @@ export class ClickUpService {
     this._checklistService = new ChecklistService(this.client);
     this._dependencyService = new DependencyService(this.client);
     this._attachmentService = new AttachmentService(this.client);
+    this._chatService = new ChatService(this.client);
 
     logger.info("ClickUpService initialized with all resource services.");
   }
@@ -193,6 +196,9 @@ export class ClickUpService {
   }
   public get attachmentService(): AttachmentService {
     return this._attachmentService;
+  }
+  public get chatService(): ChatService {
+    return this._chatService;
   }
 
   // Remove getToken method
