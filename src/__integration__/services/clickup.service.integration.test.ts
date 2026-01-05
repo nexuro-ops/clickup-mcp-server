@@ -1,11 +1,12 @@
 import "../../__integration__/setup/integration.setup.js";
-import { ClickUpService } from "../../services/clickup.service.js";
 import { testCleanup } from "../setup/clickup.cleanup.js";
 
 describe("ClickUpService - Tests d'Intégration", () => {
-  let clickUpService: ClickUpService;
+  let clickUpService: any;
 
   beforeAll(() => {
+    // Require ClickUpService AFTER modules have been reset by the integration setup
+    const { ClickUpService } = require("../../services/clickup.service.js");
     clickUpService = new ClickUpService();
   });
 
@@ -51,15 +52,19 @@ describe("ClickUpService - Tests d'Intégration", () => {
       // Créer un service avec un token invalide
       const originalToken = process.env.CLICKUP_PERSONAL_TOKEN;
       process.env.CLICKUP_PERSONAL_TOKEN = "token_invalide";
-      
+
       try {
+        // Clear modules and require with invalid token
+        jest.resetModules();
+        const { ClickUpService } = require("../../services/clickup.service.js");
         const invalidService = new ClickUpService();
-        
+
         // Should throw an error
         await expect(invalidService.getTeams()).rejects.toThrow();
       } finally {
         // Restaurer le token original
         process.env.CLICKUP_PERSONAL_TOKEN = originalToken;
+        jest.resetModules();
       }
     });
   });
