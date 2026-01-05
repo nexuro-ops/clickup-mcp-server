@@ -8,7 +8,8 @@ export class ChatService {
     this.client = client;
   }
 
-  // Channel operations
+  // Channel Operations
+
   async getChannels(workspaceId: string): Promise<any> {
     logger.debug(`Getting channels for workspace ${workspaceId}`);
     try {
@@ -30,10 +31,7 @@ export class ChatService {
     }
   }
 
-  async createChannel(
-    workspaceId: string,
-    channelData: any,
-  ): Promise<any> {
+  async createChannel(workspaceId: string, channelData: any): Promise<any> {
     logger.debug(`Creating channel in workspace ${workspaceId}`);
     try {
       const response = await this.client.post<any>(
@@ -102,10 +100,7 @@ export class ChatService {
     }
   }
 
-  async deleteChannel(
-    workspaceId: string,
-    channelId: string,
-  ): Promise<any> {
+  async deleteChannel(workspaceId: string, channelId: string): Promise<any> {
     logger.debug(`Deleting channel ${channelId} in workspace ${workspaceId}`);
     try {
       const response = await this.client.delete<any>(
@@ -122,7 +117,7 @@ export class ChatService {
       } else if (error instanceof Error) {
         logger.error(`Generic error deleting channel: ${error.message}`);
       }
-      throw new Error("Failed to delete channel from ClickUp");
+      throw new Error("Failed to delete channel in ClickUp");
     }
   }
 
@@ -146,16 +141,15 @@ export class ChatService {
           url: error.config?.url,
         });
       } else if (error instanceof Error) {
-        logger.error(`Generic error getting channel followers: ${error.message}`);
+        logger.error(
+          `Generic error getting channel followers: ${error.message}`,
+        );
       }
       throw new Error("Failed to get channel followers from ClickUp");
     }
   }
 
-  async getChannelMembers(
-    workspaceId: string,
-    channelId: string,
-  ): Promise<any> {
+  async getChannelMembers(workspaceId: string, channelId: string): Promise<any> {
     logger.debug(
       `Getting members for channel ${channelId} in workspace ${workspaceId}`,
     );
@@ -178,13 +172,16 @@ export class ChatService {
     }
   }
 
-  // Message operations
+  // Message Operations
+
   async createMessage(
     workspaceId: string,
     channelId: string,
     messageData: any,
   ): Promise<any> {
-    logger.debug(`Creating message in channel ${channelId}`);
+    logger.debug(
+      `Creating message in channel ${channelId} in workspace ${workspaceId}`,
+    );
     try {
       const response = await this.client.post<any>(
         `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages`,
@@ -208,10 +205,14 @@ export class ChatService {
   async getMessages(
     workspaceId: string,
     channelId: string,
-    params?: any,
+    pagination?: any,
   ): Promise<any> {
-    logger.debug(`Getting messages for channel ${channelId}`);
+    logger.debug(
+      `Getting messages for channel ${channelId} in workspace ${workspaceId}`,
+    );
     try {
+      const params =
+        pagination && Object.keys(pagination).length > 0 ? pagination : undefined;
       const response = await this.client.get<any>(
         `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages`,
         { params },
@@ -237,7 +238,9 @@ export class ChatService {
     messageId: string,
     updateData: any,
   ): Promise<any> {
-    logger.debug(`Updating message ${messageId} in channel ${channelId}`);
+    logger.debug(
+      `Updating message ${messageId} in channel ${channelId} in workspace ${workspaceId}`,
+    );
     try {
       const response = await this.client.put<any>(
         `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}`,
@@ -263,7 +266,9 @@ export class ChatService {
     channelId: string,
     messageId: string,
   ): Promise<any> {
-    logger.debug(`Deleting message ${messageId} from channel ${channelId}`);
+    logger.debug(
+      `Deleting message ${messageId} in channel ${channelId} in workspace ${workspaceId}`,
+    );
     try {
       const response = await this.client.delete<any>(
         `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}`,
@@ -279,11 +284,12 @@ export class ChatService {
       } else if (error instanceof Error) {
         logger.error(`Generic error deleting message: ${error.message}`);
       }
-      throw new Error("Failed to delete message from ClickUp");
+      throw new Error("Failed to delete message in ClickUp");
     }
   }
 
-  // Direct message operations
+  // Direct Message Operations
+
   async createDirectMessage(workspaceId: string, dmData: any): Promise<any> {
     logger.debug(`Creating direct message in workspace ${workspaceId}`);
     try {
@@ -300,23 +306,27 @@ export class ChatService {
           url: error.config?.url,
         });
       } else if (error instanceof Error) {
-        logger.error(`Generic error creating direct message: ${error.message}`);
+        logger.error(
+          `Generic error creating direct message: ${error.message}`,
+        );
       }
       throw new Error("Failed to create direct message in ClickUp");
     }
   }
 
-  // Message reaction operations
+  // Message Reaction Operations
+
   async createMessageReaction(
     workspaceId: string,
-    channelId: string,
     messageId: string,
     reactionData: any,
   ): Promise<any> {
-    logger.debug(`Creating reaction for message ${messageId}`);
+    logger.debug(
+      `Creating reaction on message ${messageId} in workspace ${workspaceId}`,
+    );
     try {
       const response = await this.client.post<any>(
-        `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/reactions`,
+        `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/reactions`,
         reactionData,
       );
       return response.data;
@@ -339,22 +349,26 @@ export class ChatService {
 
   async getMessageReactions(
     workspaceId: string,
-    channelId: string,
     messageId: string,
   ): Promise<any> {
-    logger.debug(`Getting reactions for message ${messageId}`);
+    logger.debug(
+      `Getting reactions for message ${messageId} in workspace ${workspaceId}`,
+    );
     try {
       const response = await this.client.get<any>(
-        `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/reactions`,
+        `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/reactions`,
       );
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        logger.error(`Axios error getting message reactions: ${error.message}`, {
-          status: error.response?.status,
-          data: error.response?.data,
-          url: error.config?.url,
-        });
+        logger.error(
+          `Axios error getting message reactions: ${error.message}`,
+          {
+            status: error.response?.status,
+            data: error.response?.data,
+            url: error.config?.url,
+          },
+        );
       } else if (error instanceof Error) {
         logger.error(`Generic error getting message reactions: ${error.message}`);
       }
@@ -364,14 +378,15 @@ export class ChatService {
 
   async deleteMessageReaction(
     workspaceId: string,
-    channelId: string,
     messageId: string,
     reactionId: string,
   ): Promise<any> {
-    logger.debug(`Deleting reaction ${reactionId} from message ${messageId}`);
+    logger.debug(
+      `Deleting reaction ${reactionId} on message ${messageId} in workspace ${workspaceId}`,
+    );
     try {
       const response = await this.client.delete<any>(
-        `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/reactions/${reactionId}`,
+        `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/reactions/${reactionId}`,
       );
       return response.data;
     } catch (error) {
@@ -387,21 +402,23 @@ export class ChatService {
       } else if (error instanceof Error) {
         logger.error(`Generic error deleting message reaction: ${error.message}`);
       }
-      throw new Error("Failed to delete message reaction from ClickUp");
+      throw new Error("Failed to delete message reaction in ClickUp");
     }
   }
 
-  // Reply operations
+  // Reply Operations
+
   async createReply(
     workspaceId: string,
-    channelId: string,
     messageId: string,
     replyData: any,
   ): Promise<any> {
-    logger.debug(`Creating reply to message ${messageId}`);
+    logger.debug(
+      `Creating reply to message ${messageId} in workspace ${workspaceId}`,
+    );
     try {
       const response = await this.client.post<any>(
-        `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/replies`,
+        `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/replies`,
         replyData,
       );
       return response.data;
@@ -421,14 +438,17 @@ export class ChatService {
 
   async getReplies(
     workspaceId: string,
-    channelId: string,
     messageId: string,
-    params?: any,
+    pagination?: any,
   ): Promise<any> {
-    logger.debug(`Getting replies for message ${messageId}`);
+    logger.debug(
+      `Getting replies for message ${messageId} in workspace ${workspaceId}`,
+    );
     try {
+      const params =
+        pagination && Object.keys(pagination).length > 0 ? pagination : undefined;
       const response = await this.client.get<any>(
-        `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/replies`,
+        `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/replies`,
         { params },
       );
       return response.data;
@@ -446,7 +466,8 @@ export class ChatService {
     }
   }
 
-  // User operations
+  // User Operations
+
   async getMentionableUsers(workspaceId: string): Promise<any> {
     logger.debug(`Getting mentionable users for workspace ${workspaceId}`);
     try {

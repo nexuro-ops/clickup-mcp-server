@@ -34,16 +34,12 @@ interface Config {
 // }
 
 function validateConfig(): Config {
-  // Update required env vars
-  const requiredEnvVars = ["CLICKUP_PERSONAL_TOKEN"];
-  // const requiredEnvVars = ["CLICKUP_CLIENT_ID", "CLICKUP_CLIENT_SECRET"];
+  // Update required env vars - accept both CLICKUP_PERSONAL_TOKEN and CLICKUP_API_KEY for compatibility
+  const clickUpPersonalToken = process.env.CLICKUP_PERSONAL_TOKEN || process.env.CLICKUP_API_KEY;
 
-  const missingVars = requiredEnvVars.filter(
-    (varName) => !process.env[varName],
-  );
-  if (missingVars.length > 0) {
+  if (!clickUpPersonalToken) {
     throw new Error(
-      `Missing required environment variables: ${missingVars.join(", ")}`,
+      "Missing required environment variable: CLICKUP_PERSONAL_TOKEN or CLICKUP_API_KEY",
     );
   }
 
@@ -55,8 +51,8 @@ function validateConfig(): Config {
   //   process.env.CLICKUP_REDIRECT_URI ||
   //   `http://localhost:${port}/oauth/clickup/callback`;
 
-  // Get ClickUp Personal Token
-  const clickUpPersonalToken = process.env.CLICKUP_PERSONAL_TOKEN!;
+  // Get ClickUp Personal Token (already validated above)
+  const token = clickUpPersonalToken;
 
   // Get or Generate encryption key (still potentially useful for encrypting the token at rest)
   const encryptionKey =
@@ -75,7 +71,7 @@ function validateConfig(): Config {
     //   apiUrl: "https://api.clickup.com/api/v2",
     //   authUrl: "https://app.clickup.com/api",
     // },
-    clickUpPersonalToken, // Add token directly
+    clickUpPersonalToken: token, // Add token directly (accepts CLICKUP_PERSONAL_TOKEN or CLICKUP_API_KEY)
     clickUpApiUrl: "https://api.clickup.com/api", // Base URL with /api path
     encryptionKey, // Keep encryption key
   };
