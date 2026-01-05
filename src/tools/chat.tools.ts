@@ -416,10 +416,6 @@ export const createMessageReactionTool: Tool = {
         type: "string",
         description: "The unique identifier of the workspace.",
       },
-      channel_id: {
-        type: "string",
-        description: "The unique identifier of the channel.",
-      },
       message_id: {
         type: "string",
         description: "The unique identifier of the message.",
@@ -429,7 +425,7 @@ export const createMessageReactionTool: Tool = {
         description: "The emoji reaction (e.g., 'thumbsup', 'heart').",
       },
     },
-    required: ["workspace_id", "channel_id", "message_id", "emoji"],
+    required: ["workspace_id", "message_id", "emoji"],
   },
   outputSchema: {
     type: "object",
@@ -453,16 +449,12 @@ export const getMessageReactionsTool: Tool = {
         type: "string",
         description: "The unique identifier of the workspace.",
       },
-      channel_id: {
-        type: "string",
-        description: "The unique identifier of the channel.",
-      },
       message_id: {
         type: "string",
         description: "The unique identifier of the message.",
       },
     },
-    required: ["workspace_id", "channel_id", "message_id"],
+    required: ["workspace_id", "message_id"],
   },
   outputSchema: {
     type: "object",
@@ -489,10 +481,6 @@ export const deleteMessageReactionTool: Tool = {
         type: "string",
         description: "The unique identifier of the workspace.",
       },
-      channel_id: {
-        type: "string",
-        description: "The unique identifier of the channel.",
-      },
       message_id: {
         type: "string",
         description: "The unique identifier of the message.",
@@ -502,7 +490,7 @@ export const deleteMessageReactionTool: Tool = {
         description: "The unique identifier of the reaction.",
       },
     },
-    required: ["workspace_id", "channel_id", "message_id", "reaction_id"],
+    required: ["workspace_id", "message_id", "reaction_id"],
   },
   outputSchema: {
     type: "object",
@@ -525,10 +513,6 @@ export const createReplyTool: Tool = {
         type: "string",
         description: "The unique identifier of the workspace.",
       },
-      channel_id: {
-        type: "string",
-        description: "The unique identifier of the channel.",
-      },
       message_id: {
         type: "string",
         description: "The unique identifier of the message to reply to.",
@@ -538,7 +522,7 @@ export const createReplyTool: Tool = {
         description: "The reply text content.",
       },
     },
-    required: ["workspace_id", "channel_id", "message_id", "text"],
+    required: ["workspace_id", "message_id", "text"],
   },
   outputSchema: {
     type: "object",
@@ -562,10 +546,6 @@ export const getRepliesTool: Tool = {
         type: "string",
         description: "The unique identifier of the workspace.",
       },
-      channel_id: {
-        type: "string",
-        description: "The unique identifier of the channel.",
-      },
       message_id: {
         type: "string",
         description: "The unique identifier of the message.",
@@ -579,7 +559,7 @@ export const getRepliesTool: Tool = {
         description: "Optional: Offset for pagination (default: 0).",
       },
     },
-    required: ["workspace_id", "channel_id", "message_id"],
+    required: ["workspace_id", "message_id"],
   },
   outputSchema: {
     type: "object",
@@ -1127,18 +1107,14 @@ export async function handleCreateMessageReaction(
   clickUpService: ClickUpService,
   args: Record<string, unknown>,
 ) {
-  const { workspace_id, channel_id, message_id, emoji } = args as {
+  const { workspace_id, message_id, emoji } = args as {
     workspace_id: string;
-    channel_id: string;
     message_id: string;
     emoji: string;
   };
 
   if (!workspace_id || typeof workspace_id !== "string") {
     throw new Error("Workspace ID is required and must be a string.");
-  }
-  if (!channel_id || typeof channel_id !== "string") {
-    throw new Error("Channel ID is required and must be a string.");
   }
   if (!message_id || typeof message_id !== "string") {
     throw new Error("Message ID is required and must be a string.");
@@ -1151,7 +1127,6 @@ export async function handleCreateMessageReaction(
   try {
     const response = await clickUpService.chatService.createMessageReaction(
       workspace_id,
-      channel_id,
       message_id,
       { emoji },
     );
@@ -1176,17 +1151,13 @@ export async function handleGetMessageReactions(
   clickUpService: ClickUpService,
   args: Record<string, unknown>,
 ) {
-  const { workspace_id, channel_id, message_id } = args as {
+  const { workspace_id, message_id } = args as {
     workspace_id: string;
-    channel_id: string;
     message_id: string;
   };
 
   if (!workspace_id || typeof workspace_id !== "string") {
     throw new Error("Workspace ID is required and must be a string.");
-  }
-  if (!channel_id || typeof channel_id !== "string") {
-    throw new Error("Channel ID is required and must be a string.");
   }
   if (!message_id || typeof message_id !== "string") {
     throw new Error("Message ID is required and must be a string.");
@@ -1196,7 +1167,6 @@ export async function handleGetMessageReactions(
   try {
     const response = await clickUpService.chatService.getMessageReactions(
       workspace_id,
-      channel_id,
       message_id,
     );
     return {
@@ -1220,18 +1190,14 @@ export async function handleDeleteMessageReaction(
   clickUpService: ClickUpService,
   args: Record<string, unknown>,
 ) {
-  const { workspace_id, channel_id, message_id, reaction_id } = args as {
+  const { workspace_id, message_id, reaction_id } = args as {
     workspace_id: string;
-    channel_id: string;
     message_id: string;
     reaction_id: string;
   };
 
   if (!workspace_id || typeof workspace_id !== "string") {
     throw new Error("Workspace ID is required and must be a string.");
-  }
-  if (!channel_id || typeof channel_id !== "string") {
-    throw new Error("Channel ID is required and must be a string.");
   }
   if (!message_id || typeof message_id !== "string") {
     throw new Error("Message ID is required and must be a string.");
@@ -1244,7 +1210,6 @@ export async function handleDeleteMessageReaction(
   try {
     await clickUpService.chatService.deleteMessageReaction(
       workspace_id,
-      channel_id,
       message_id,
       reaction_id,
     );
@@ -1269,18 +1234,14 @@ export async function handleCreateReply(
   clickUpService: ClickUpService,
   args: Record<string, unknown>,
 ) {
-  const { workspace_id, channel_id, message_id, text } = args as {
+  const { workspace_id, message_id, text } = args as {
     workspace_id: string;
-    channel_id: string;
     message_id: string;
     text: string;
   };
 
   if (!workspace_id || typeof workspace_id !== "string") {
     throw new Error("Workspace ID is required and must be a string.");
-  }
-  if (!channel_id || typeof channel_id !== "string") {
-    throw new Error("Channel ID is required and must be a string.");
   }
   if (!message_id || typeof message_id !== "string") {
     throw new Error("Message ID is required and must be a string.");
@@ -1293,7 +1254,6 @@ export async function handleCreateReply(
   try {
     const response = await clickUpService.chatService.createReply(
       workspace_id,
-      channel_id,
       message_id,
       { text },
     );
@@ -1316,9 +1276,8 @@ export async function handleGetReplies(
   clickUpService: ClickUpService,
   args: Record<string, unknown>,
 ) {
-  const { workspace_id, channel_id, message_id, limit, offset } = args as {
+  const { workspace_id, message_id, limit, offset } = args as {
     workspace_id: string;
-    channel_id: string;
     message_id: string;
     limit?: number;
     offset?: number;
@@ -1326,9 +1285,6 @@ export async function handleGetReplies(
 
   if (!workspace_id || typeof workspace_id !== "string") {
     throw new Error("Workspace ID is required and must be a string.");
-  }
-  if (!channel_id || typeof channel_id !== "string") {
-    throw new Error("Channel ID is required and must be a string.");
   }
   if (!message_id || typeof message_id !== "string") {
     throw new Error("Message ID is required and must be a string.");
@@ -1342,7 +1298,6 @@ export async function handleGetReplies(
   try {
     const response = await clickUpService.chatService.getReplies(
       workspace_id,
-      channel_id,
       message_id,
       pagination,
     );

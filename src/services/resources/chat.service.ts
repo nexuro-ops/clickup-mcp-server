@@ -318,16 +318,15 @@ export class ChatService {
 
   async createMessageReaction(
     workspaceId: string,
-    channelId: string,
     messageId: string,
     reactionData: any,
   ): Promise<any> {
     logger.debug(
-      `Creating reaction on message ${messageId} in channel ${channelId} in workspace ${workspaceId}`,
+      `Creating reaction on message ${messageId} in workspace ${workspaceId}`,
     );
     try {
       const response = await this.client.post<any>(
-        `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/reactions`,
+        `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/reactions`,
         reactionData,
       );
       return response.data;
@@ -350,15 +349,14 @@ export class ChatService {
 
   async getMessageReactions(
     workspaceId: string,
-    channelId: string,
     messageId: string,
   ): Promise<any> {
     logger.debug(
-      `Getting reactions for message ${messageId} in channel ${channelId} in workspace ${workspaceId}`,
+      `Getting reactions for message ${messageId} in workspace ${workspaceId}`,
     );
     try {
       const response = await this.client.get<any>(
-        `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/reactions`,
+        `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/reactions`,
       );
       return response.data;
     } catch (error) {
@@ -380,16 +378,15 @@ export class ChatService {
 
   async deleteMessageReaction(
     workspaceId: string,
-    channelId: string,
     messageId: string,
     reactionId: string,
   ): Promise<any> {
     logger.debug(
-      `Deleting reaction ${reactionId} on message ${messageId} in channel ${channelId} in workspace ${workspaceId}`,
+      `Deleting reaction ${reactionId} on message ${messageId} in workspace ${workspaceId}`,
     );
     try {
       const response = await this.client.delete<any>(
-        `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/reactions/${reactionId}`,
+        `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/reactions/${reactionId}`,
       );
       return response.data;
     } catch (error) {
@@ -413,16 +410,15 @@ export class ChatService {
 
   async createReply(
     workspaceId: string,
-    channelId: string,
     messageId: string,
     replyData: any,
   ): Promise<any> {
     logger.debug(
-      `Creating reply to message ${messageId} in channel ${channelId} in workspace ${workspaceId}`,
+      `Creating reply to message ${messageId} in workspace ${workspaceId}`,
     );
     try {
       const response = await this.client.post<any>(
-        `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/replies`,
+        `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/replies`,
         replyData,
       );
       return response.data;
@@ -442,18 +438,17 @@ export class ChatService {
 
   async getReplies(
     workspaceId: string,
-    channelId: string,
     messageId: string,
     pagination?: any,
   ): Promise<any> {
     logger.debug(
-      `Getting replies for message ${messageId} in channel ${channelId} in workspace ${workspaceId}`,
+      `Getting replies for message ${messageId} in workspace ${workspaceId}`,
     );
     try {
       const params =
         pagination && Object.keys(pagination).length > 0 ? pagination : undefined;
       const response = await this.client.get<any>(
-        `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/replies`,
+        `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/replies`,
         { params },
       );
       return response.data;

@@ -350,14 +350,13 @@ describe("ChatService", () => {
 
         const result = await chatService.createMessageReaction(
           workspaceId,
-          channelId,
           messageId,
           reactionData,
         );
 
         expect(result).toEqual(mockResponse);
         expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-          `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/reactions`,
+          `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/reactions`,
           reactionData,
         );
       });
@@ -372,13 +371,12 @@ describe("ChatService", () => {
 
         const result = await chatService.getMessageReactions(
           workspaceId,
-          channelId,
           messageId,
         );
 
         expect(result).toEqual(mockReactions);
         expect(mockAxiosInstance.get).toHaveBeenCalledWith(
-          `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/reactions`,
+          `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/reactions`,
         );
       });
     });
@@ -390,14 +388,13 @@ describe("ChatService", () => {
 
         const result = await chatService.deleteMessageReaction(
           workspaceId,
-          channelId,
           messageId,
           reactionId,
         );
 
         expect(result).toEqual(mockResponse);
         expect(mockAxiosInstance.delete).toHaveBeenCalledWith(
-          `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/reactions/${reactionId}`,
+          `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/reactions/${reactionId}`,
         );
       });
     });
@@ -416,14 +413,13 @@ describe("ChatService", () => {
 
         const result = await chatService.createReply(
           workspaceId,
-          channelId,
           messageId,
           replyData,
         );
 
         expect(result).toEqual(mockResponse);
         expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-          `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/replies`,
+          `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/replies`,
           replyData,
         );
       });
@@ -441,14 +437,13 @@ describe("ChatService", () => {
 
         const result = await chatService.getReplies(
           workspaceId,
-          channelId,
           messageId,
           { limit: 5, offset: 0 },
         );
 
         expect(result).toEqual(mockReplies);
         expect(mockAxiosInstance.get).toHaveBeenCalledWith(
-          `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}/replies`,
+          `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/replies`,
           { params: { limit: 5, offset: 0 } },
         );
       });

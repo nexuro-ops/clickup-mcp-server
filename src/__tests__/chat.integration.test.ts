@@ -199,7 +199,6 @@ describe("Chat Integration Tests", () => {
 
       const result = await chatService.createMessageReaction(
         workspaceId,
-        channelId,
         messageId,
         reactionData,
       );
@@ -216,7 +215,6 @@ describe("Chat Integration Tests", () => {
 
       const result = await chatService.getMessageReactions(
         workspaceId,
-        channelId,
         messageId,
       );
 
@@ -235,7 +233,6 @@ describe("Chat Integration Tests", () => {
 
       const result = await chatService.createReply(
         workspaceId,
-        channelId,
         messageId,
         replyData,
       );
@@ -252,7 +249,6 @@ describe("Chat Integration Tests", () => {
 
       const result = await chatService.getReplies(
         workspaceId,
-        channelId,
         messageId,
         { limit: 5, offset: 0 },
       );

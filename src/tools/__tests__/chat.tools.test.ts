@@ -403,7 +403,6 @@ describe("Chat Tool Handlers", () => {
 
         const result = await handleCreateMessageReaction(mockClickUpService, {
           workspace_id: "ws123",
-          channel_id: "ch1",
           message_id: "msg1",
           emoji: "thumbsup",
         });
@@ -415,7 +414,6 @@ describe("Chat Tool Handlers", () => {
         await expect(
           handleCreateMessageReaction(mockClickUpService, {
             workspace_id: "ws123",
-            channel_id: "ch1",
             message_id: "msg1",
           }),
         ).rejects.toThrow("Emoji is required and must be a string.");
@@ -433,7 +431,6 @@ describe("Chat Tool Handlers", () => {
 
         const result = await handleGetMessageReactions(mockClickUpService, {
           workspace_id: "ws123",
-          channel_id: "ch1",
           message_id: "msg1",
         });
 
@@ -451,7 +448,6 @@ describe("Chat Tool Handlers", () => {
 
         const result = await handleDeleteMessageReaction(mockClickUpService, {
           workspace_id: "ws123",
-          channel_id: "ch1",
           message_id: "msg1",
           reaction_id: "reaction1",
         });
@@ -471,7 +467,6 @@ describe("Chat Tool Handlers", () => {
 
         const result = await handleCreateReply(mockClickUpService, {
           workspace_id: "ws123",
-          channel_id: "ch1",
           message_id: "msg1",
           text: "Great idea!",
         });
@@ -494,7 +489,6 @@ describe("Chat Tool Handlers", () => {
 
         const result = await handleGetReplies(mockClickUpService, {
           workspace_id: "ws123",
-          channel_id: "ch1",
           message_id: "msg1",
           limit: 5,
           offset: 0,
