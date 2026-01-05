@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "clickup-mcp": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/home/fedora/nexuro/clickup-mcp-server/dist/index.js"
+      ],
+      "env": {
+        "CLICKUP_API_KEY": "pk_100799525_W0CTMW03LM2X7FNGPYW5TVG7GZ0OL36J"
+      }
+    }
+  }
+}
