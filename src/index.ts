@@ -231,119 +231,112 @@ async function main() {
   try {
     logger.info("Starting ClickUp MCP Server...");
     const clickUpService = new ClickUpService();
-    const serverOptions = {
-      capabilities: {
-        tools: {
-          // Task tools
-          createTaskTool,
-          updateTaskTool,
-          getTaskTool,
-          getTasksTool,
-          deleteTaskTool,
-          // Team tools
-          getTeamsTool,
-          // List tools
-          getListsTool,
-          createListTool,
-          // Board tools
-          createBoardTool,
-          // Space tools
-          getSpacesTool,
-          createSpaceTool,
-          getSpaceTool,
-          updateSpaceTool,
-          deleteSpaceTool,
-          // Folder tools
-          getFoldersTool,
-          createFolderTool,
-          getFolderTool,
-          updateFolderTool,
-          deleteFolderTool,
-          // Custom field tools
-          getCustomFieldsTool,
-          setTaskCustomFieldValueTool,
-          removeTaskCustomFieldValueTool,
-          // Doc tools
-          searchDocsTool,
-          createDocTool,
-          getDocPagesTool,
-          createDocPageTool,
-          getDocPageContentTool,
-          editDocPageContentTool,
-          // View tools
-          getViewsTool,
-          createViewTool,
-          getViewDetailsTool,
-          updateViewTool,
-          deleteViewTool,
-          getViewTasksTool,
-          // Comment tools
-          createCommentTool,
-          getCommentsTool,
-          updateCommentTool,
-          deleteCommentTool,
-          // Time tracking tools
-          createTimeEntryTool,
-          getTimeEntriesTool,
-          updateTimeEntryTool,
-          deleteTimeEntryTool,
-          startTimerTool,
-          stopTimerTool,
-          getCurrentTimerTool,
-          // Checklist tools
-          createChecklistTool,
-          updateChecklistTool,
-          deleteChecklistTool,
-          createChecklistItemTool,
-          updateChecklistItemTool,
-          deleteChecklistItemTool,
-          // Dependency tools
-          addDependencyTool,
-          deleteDependencyTool,
-          addTaskLinkTool,
-          deleteTaskLinkTool,
-          // Attachment tools
-          uploadAttachmentTool,
-          deleteAttachmentTool,
-          // Chat tools
-          getChannelsTool,
-          createChannelTool,
-          getChannelTool,
-          updateChannelTool,
-          deleteChannelTool,
-          getChannelFollowersTool,
-          getChannelMembersTool,
-          createMessageTool,
-          getMessagesTool,
-          updateMessageTool,
-          deleteMessageTool,
-          createDirectMessageTool,
-          createMessageReactionTool,
-          getMessageReactionsTool,
-          deleteMessageReactionTool,
-          createReplyTool,
-          getRepliesTool,
-          getMentionableUsersTool,
-        },
-      },
+
+    // Define tools registry
+    const toolsRegistry = {
+      // Task tools
+      createTaskTool,
+      updateTaskTool,
+      getTaskTool,
+      getTasksTool,
+      deleteTaskTool,
+      // Team tools
+      getTeamsTool,
+      // List tools
+      getListsTool,
+      createListTool,
+      // Board tools
+      createBoardTool,
+      // Space tools
+      getSpacesTool,
+      createSpaceTool,
+      getSpaceTool,
+      updateSpaceTool,
+      deleteSpaceTool,
+      // Folder tools
+      getFoldersTool,
+      createFolderTool,
+      getFolderTool,
+      updateFolderTool,
+      deleteFolderTool,
+      // Custom field tools
+      getCustomFieldsTool,
+      setTaskCustomFieldValueTool,
+      removeTaskCustomFieldValueTool,
+      // Doc tools
+      searchDocsTool,
+      createDocTool,
+      getDocPagesTool,
+      createDocPageTool,
+      getDocPageContentTool,
+      editDocPageContentTool,
+      // View tools
+      getViewsTool,
+      createViewTool,
+      getViewDetailsTool,
+      updateViewTool,
+      deleteViewTool,
+      getViewTasksTool,
+      // Comment tools
+      createCommentTool,
+      getCommentsTool,
+      updateCommentTool,
+      deleteCommentTool,
+      // Time tracking tools
+      createTimeEntryTool,
+      getTimeEntriesTool,
+      updateTimeEntryTool,
+      deleteTimeEntryTool,
+      startTimerTool,
+      stopTimerTool,
+      getCurrentTimerTool,
+      // Checklist tools
+      createChecklistTool,
+      updateChecklistTool,
+      deleteChecklistTool,
+      createChecklistItemTool,
+      updateChecklistItemTool,
+      deleteChecklistItemTool,
+      // Dependency tools
+      addDependencyTool,
+      deleteDependencyTool,
+      addTaskLinkTool,
+      deleteTaskLinkTool,
+      // Attachment tools
+      uploadAttachmentTool,
+      deleteAttachmentTool,
+      // Chat tools
+      getChannelsTool,
+      createChannelTool,
+      getChannelTool,
+      updateChannelTool,
+      deleteChannelTool,
+      getChannelFollowersTool,
+      getChannelMembersTool,
+      createMessageTool,
+      getMessagesTool,
+      updateMessageTool,
+      deleteMessageTool,
+      createDirectMessageTool,
+      createMessageReactionTool,
+      getMessageReactionsTool,
+      deleteMessageReactionTool,
+      createReplyTool,
+      getRepliesTool,
+      getMentionableUsersTool,
     };
+
     const server = new Server(
       {
         name: "ClickUp MCP Server",
         version: "1.0.0",
       },
-      serverOptions,
     );
 
     // Handle ListTools request
     server.setRequestHandler(ListToolsRequestSchema, async () => {
-      // The 'tools' object within serverOptions.capabilities.tools
-      // is an object where keys are the shorthand property names (e.g., "createTaskTool")
-      // and values are the actual Tool definition objects.
-      // Object.values() will give an array of these Tool definition objects.
-      const toolDefinitions: Tool[] = Object.values(
-        serverOptions.capabilities.tools,
-      );
+      // Convert tools registry to Tool array
+      const toolDefinitions: Tool[] = Object.values(toolsRegistry);
       return { tools: toolDefinitions };
     });
 
