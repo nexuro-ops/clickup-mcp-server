@@ -12,6 +12,7 @@ describe("ChatService", () => {
     mockAxiosInstance = {
       get: jest.fn(),
       post: jest.fn(),
+      patch: jest.fn(),
       put: jest.fn(),
       delete: jest.fn(),
     };
@@ -114,7 +115,7 @@ describe("ChatService", () => {
       it("should update a channel successfully", async () => {
         const updateData = { name: "updated-channel" };
         const mockResponse = { id: channelId, ...updateData };
-        mockAxiosInstance.put.mockResolvedValue({ data: mockResponse });
+        mockAxiosInstance.patch.mockResolvedValue({ data: mockResponse });
 
         const result = await chatService.updateChannel(
           workspaceId,
@@ -123,7 +124,7 @@ describe("ChatService", () => {
         );
 
         expect(result).toEqual(mockResponse);
-        expect(mockAxiosInstance.put).toHaveBeenCalledWith(
+        expect(mockAxiosInstance.patch).toHaveBeenCalledWith(
           `/v3/workspaces/${workspaceId}/chat/channels/${channelId}`,
           updateData,
         );
@@ -264,7 +265,7 @@ describe("ChatService", () => {
       it("should update a message successfully", async () => {
         const updateData = { text: "Updated message" };
         const mockResponse = { id: messageId, ...updateData };
-        mockAxiosInstance.put.mockResolvedValue({ data: mockResponse });
+        mockAxiosInstance.patch.mockResolvedValue({ data: mockResponse });
 
         const result = await chatService.updateMessage(
           workspaceId,
@@ -274,8 +275,8 @@ describe("ChatService", () => {
         );
 
         expect(result).toEqual(mockResponse);
-        expect(mockAxiosInstance.put).toHaveBeenCalledWith(
-          `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}`,
+        expect(mockAxiosInstance.patch).toHaveBeenCalledWith(
+          `/v3/workspaces/${workspaceId}/chat/messages/${messageId}`,
           updateData,
         );
       });
@@ -316,7 +317,7 @@ describe("ChatService", () => {
 
         expect(result).toEqual(mockResponse);
         expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-          `/v3/workspaces/${workspaceId}/chat/direct_messages`,
+          `/v3/workspaces/${workspaceId}/chat/channels/direct_message`,
           dmData,
         );
       });
