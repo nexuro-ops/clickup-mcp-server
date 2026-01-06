@@ -331,6 +331,11 @@ async function main() {
         name: "ClickUp MCP Server",
         version: "1.0.0",
       },
+      {
+        capabilities: {
+          tools: {},
+        },
+      },
     );
 
     // Handle ListTools request
