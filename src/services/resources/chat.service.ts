@@ -81,7 +81,7 @@ export class ChatService {
   ): Promise<any> {
     logger.debug(`Updating channel ${channelId} in workspace ${workspaceId}`);
     try {
-      const response = await this.client.put<any>(
+      const response = await this.client.patch<any>(
         `/v3/workspaces/${workspaceId}/chat/channels/${channelId}`,
         updateData,
       );
@@ -242,8 +242,8 @@ export class ChatService {
       `Updating message ${messageId} in channel ${channelId} in workspace ${workspaceId}`,
     );
     try {
-      const response = await this.client.put<any>(
-        `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages/${messageId}`,
+      const response = await this.client.patch<any>(
+        `/v3/workspaces/${workspaceId}/chat/messages/${messageId}`,
         updateData,
       );
       return response.data;
@@ -294,7 +294,7 @@ export class ChatService {
     logger.debug(`Creating direct message in workspace ${workspaceId}`);
     try {
       const response = await this.client.post<any>(
-        `/v3/workspaces/${workspaceId}/chat/direct_messages`,
+        `/v3/workspaces/${workspaceId}/chat/channels/direct_message`,
         dmData,
       );
       return response.data;
@@ -379,14 +379,14 @@ export class ChatService {
   async deleteMessageReaction(
     workspaceId: string,
     messageId: string,
-    reactionId: string,
+    reaction: string,
   ): Promise<any> {
     logger.debug(
-      `Deleting reaction ${reactionId} on message ${messageId} in workspace ${workspaceId}`,
+      `Deleting reaction ${reaction} on message ${messageId} in workspace ${workspaceId}`,
     );
     try {
       const response = await this.client.delete<any>(
-        `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/reactions/${reactionId}`,
+        `/v3/workspaces/${workspaceId}/chat/messages/${messageId}/reactions/${reaction}`,
       );
       return response.data;
     } catch (error) {
