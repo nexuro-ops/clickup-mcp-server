@@ -247,6 +247,60 @@ The following MCP tools are currently implemented:
 - `clickup_delete_attachment`: Delete an attachment.
   - Requires: `attachment_id`.
 
+### Chat Management
+
+**Channel Operations:**
+
+- `clickup_get_chat_channels`: Get all chat channels in a ClickUp workspace.
+  - Requires: `workspace_id`.
+- `clickup_create_chat_channel`: Create a new chat channel in a ClickUp workspace.
+  - Requires: `workspace_id`, `name`.
+  - Optional: `description`, `private` (boolean, defaults to false).
+- `clickup_get_chat_channel`: Get details of a specific chat channel.
+  - Requires: `workspace_id`, `channel_id`.
+- `clickup_update_channel`: Update an existing chat channel.
+  - Requires: `workspace_id`, `channel_id`.
+  - Optional: `name`, `description`, `private`.
+- `clickup_delete_channel`: Delete a chat channel.
+  - Requires: `workspace_id`, `channel_id`.
+- `clickup_get_channel_members`: List all members of a specific channel.
+  - Requires: `workspace_id`, `channel_id`.
+- `clickup_get_channel_followers`: List all followers of a channel.
+  - Requires: `workspace_id`, `channel_id`.
+
+**Messaging Operations:**
+
+- `clickup_create_message`: Send a message to a chat channel.
+  - Requires: `workspace_id`, `channel_id`, `content`.
+- `clickup_get_messages`: Retrieve messages from a channel with optional pagination.
+  - Requires: `workspace_id`, `channel_id`.
+  - Optional: `page` (number for pagination).
+- `clickup_update_message`: Edit a previously sent message.
+  - Requires: `workspace_id`, `message_id`, `content`.
+- `clickup_delete_message`: Delete a message from a channel.
+  - Requires: `workspace_id`, `message_id`.
+
+**Message Threading & Reactions:**
+
+- `clickup_create_reply`: Reply to a specific message in a thread.
+  - Requires: `workspace_id`, `message_id`, `content`.
+- `clickup_get_replies`: Retrieve all replies to a message with optional pagination.
+  - Requires: `workspace_id`, `message_id`.
+  - Optional: `page` (number for pagination).
+- `clickup_create_message_reaction`: Add an emoji reaction to a message.
+  - Requires: `workspace_id`, `message_id`, `emoji`.
+- `clickup_get_message_reactions`: View all reactions on a message.
+  - Requires: `workspace_id`, `message_id`.
+- `clickup_delete_message_reaction`: Remove a reaction from a message.
+  - Requires: `workspace_id`, `message_id`, `emoji`.
+
+**Direct Messaging:**
+
+- `clickup_create_direct_message`: Send a private message to a user.
+  - Requires: `workspace_id`, `user_id`, `content`.
+- `clickup_get_mentionable_users`: Retrieve a list of users that can be mentioned in chat.
+  - Requires: `workspace_id`.
+
 ## Development
 
 1.  Clone the repository:
