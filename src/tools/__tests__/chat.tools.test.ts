@@ -10,6 +10,8 @@ import {
   handleGetMessages,
   handleUpdateMessage,
   handleDeleteMessage,
+  handleGetDirectMessages,
+  handleGetConversationMessages,
   handleCreateDirectMessage,
   handleCreateMessageReaction,
   handleGetMessageReactions,
@@ -45,6 +47,8 @@ describe("Chat Tool Handlers", () => {
         getMessages: jest.fn(),
         updateMessage: jest.fn(),
         deleteMessage: jest.fn(),
+        getDirectMessages: jest.fn(),
+        getConversationMessages: jest.fn(),
         createDirectMessage: jest.fn(),
         createMessageReaction: jest.fn(),
         getMessageReactions: jest.fn(),
@@ -366,6 +370,81 @@ describe("Chat Tool Handlers", () => {
   });
 
   describe("Direct Message Handler", () => {
+    describe("handleGetDirectMessages", () => {
+      it("should retrieve direct messages successfully", async () => {
+        const mockConversations = {
+          conversations: [
+            { id: "conv1", user_id: "user1" },
+            { id: "conv2", user_id: "user2" },
+          ],
+        };
+        mockClickUpService.chatService.getDirectMessages.mockResolvedValue(
+          mockConversations,
+        );
+
+        const result = await handleGetDirectMessages(mockClickUpService, {
+          workspace_id: "ws123",
+        });
+
+        expect(result.structuredContent.conversations).toEqual(
+          mockConversations.conversations,
+        );
+      });
+
+      it("should throw error on missing workspace_id", async () => {
+        await expect(
+          handleGetDirectMessages(mockClickUpService, {}),
+        ).rejects.toThrow("Workspace ID is required and must be a string.");
+      });
+    });
+
+    describe("handleGetConversationMessages", () => {
+      it("should retrieve conversation messages successfully", async () => {
+        const mockMessages = {
+          messages: [
+            { id: "msg1", text: "Hello", user_id: "user1" },
+            { id: "msg2", text: "Hi", user_id: "user2" },
+          ],
+        };
+        mockClickUpService.chatService.getConversationMessages.mockResolvedValue(
+          mockMessages,
+        );
+
+        const result = await handleGetConversationMessages(mockClickUpService, {
+          workspace_id: "ws123",
+          user_id: "user1",
+        });
+
+        expect(result.structuredContent.messages).toEqual(mockMessages.messages);
+      });
+
+      it("should handle pagination parameters", async () => {
+        const mockMessages = { messages: [] };
+        mockClickUpService.chatService.getConversationMessages.mockResolvedValue(
+          mockMessages,
+        );
+
+        await handleGetConversationMessages(mockClickUpService, {
+          workspace_id: "ws123",
+          user_id: "user1",
+          limit: 25,
+          offset: 50,
+        });
+
+        expect(
+          mockClickUpService.chatService.getConversationMessages,
+        ).toHaveBeenCalledWith("ws123", "user1", { limit: 25, offset: 50 });
+      });
+
+      it("should throw error on missing user_id", async () => {
+        await expect(
+          handleGetConversationMessages(mockClickUpService, {
+            workspace_id: "ws123",
+          }),
+        ).rejects.toThrow("User ID is required and must be a string.");
+      });
+    });
+
     describe("handleCreateDirectMessage", () => {
       it("should create direct message successfully", async () => {
         const mockDM = { id: "dm1", user_id: "user1", text: "Hello" };

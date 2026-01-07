@@ -304,6 +304,87 @@ describe("ChatService", () => {
   describe("Direct Message Operations", () => {
     const workspaceId = "test-workspace-123";
 
+    describe("getDirectMessages", () => {
+      it("should retrieve all direct message conversations successfully", async () => {
+        const mockResponse = {
+          conversations: [
+            { id: "conv1", user_id: "user123", last_message: "Hello" },
+            { id: "conv2", user_id: "user456", last_message: "Hi there" },
+          ],
+        };
+        mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+        const result = await chatService.getDirectMessages(workspaceId);
+
+        expect(result).toEqual(mockResponse);
+        expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+          `/v3/workspaces/${workspaceId}/chat/channels/direct_message`,
+        );
+      });
+
+      it("should handle retrieval errors", async () => {
+        mockAxiosInstance.get.mockRejectedValue(
+          new Error("Failed to fetch"),
+        );
+
+        await expect(
+          chatService.getDirectMessages(workspaceId),
+        ).rejects.toThrow("Failed to get direct messages from ClickUp");
+      });
+    });
+
+    describe("getConversationMessages", () => {
+      it("should retrieve conversation messages successfully", async () => {
+        const userId = "user123";
+        const mockResponse = {
+          messages: [
+            { id: "msg1", text: "Hello", user_id: userId },
+            { id: "msg2", text: "How are you?", user_id: workspaceId },
+          ],
+        };
+        mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+        const result = await chatService.getConversationMessages(
+          workspaceId,
+          userId,
+        );
+
+        expect(result).toEqual(mockResponse);
+        expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+          `/v3/workspaces/${workspaceId}/chat/channels/direct_message/${userId}`,
+          { params: undefined },
+        );
+      });
+
+      it("should support pagination parameters", async () => {
+        const userId = "user123";
+        const pagination = { limit: 25, offset: 50 };
+        const mockResponse = { messages: [] };
+        mockAxiosInstance.get.mockResolvedValue({ data: mockResponse });
+
+        await chatService.getConversationMessages(
+          workspaceId,
+          userId,
+          pagination,
+        );
+
+        expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+          `/v3/workspaces/${workspaceId}/chat/channels/direct_message/${userId}`,
+          { params: pagination },
+        );
+      });
+
+      it("should handle retrieval errors", async () => {
+        mockAxiosInstance.get.mockRejectedValue(
+          new Error("Failed to fetch"),
+        );
+
+        await expect(
+          chatService.getConversationMessages(workspaceId, "user123"),
+        ).rejects.toThrow("Failed to get conversation messages from ClickUp");
+      });
+    });
+
     describe("createDirectMessage", () => {
       it("should create a direct message successfully", async () => {
         const dmData = { user_id: "user123", text: "Hello" };
