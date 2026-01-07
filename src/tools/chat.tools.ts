@@ -373,6 +373,74 @@ export const deleteMessageTool: Tool = {
   },
 };
 
+export const getDirectMessagesTool: Tool = {
+  name: "clickup_get_direct_messages",
+  description: "Get all direct message conversations in a workspace",
+  inputSchema: {
+    type: "object",
+    properties: {
+      workspace_id: {
+        type: "string",
+        description: "The unique identifier of the workspace.",
+      },
+    },
+    required: ["workspace_id"],
+  },
+  outputSchema: {
+    type: "object",
+    properties: {
+      conversations: {
+        type: "array",
+        items: {
+          type: "object",
+          additionalProperties: true,
+        },
+      },
+    },
+    description: "An array of direct message conversation objects.",
+  },
+};
+
+export const getConversationMessagesTool: Tool = {
+  name: "clickup_get_conversation_messages",
+  description: "Get messages from a direct message conversation with a specific user",
+  inputSchema: {
+    type: "object",
+    properties: {
+      workspace_id: {
+        type: "string",
+        description: "The unique identifier of the workspace.",
+      },
+      user_id: {
+        type: "string",
+        description: "The unique identifier of the user in the conversation.",
+      },
+      limit: {
+        type: "number",
+        description: "Optional: Number of messages to retrieve (default: 50).",
+      },
+      offset: {
+        type: "number",
+        description: "Optional: Offset for pagination (default: 0).",
+      },
+    },
+    required: ["workspace_id", "user_id"],
+  },
+  outputSchema: {
+    type: "object",
+    properties: {
+      messages: {
+        type: "array",
+        items: {
+          type: "object",
+          additionalProperties: true,
+        },
+      },
+    },
+    description: "An array of direct message objects.",
+  },
+};
+
 export const createDirectMessageTool: Tool = {
   name: "clickup_create_direct_message",
   description: "Send a direct message to a user",
@@ -1057,6 +1125,84 @@ export async function handleDeleteMessage(
     throw error instanceof Error
       ? error
       : new Error("Failed to delete message");
+  }
+}
+
+export async function handleGetDirectMessages(
+  clickUpService: ClickUpService,
+  args: Record<string, unknown>,
+) {
+  const { workspace_id } = args as { workspace_id: string };
+
+  if (!workspace_id || typeof workspace_id !== "string") {
+    throw new Error("Workspace ID is required and must be a string.");
+  }
+
+  logger.info(`Handling tool call: ${getDirectMessagesTool.name}`);
+  try {
+    const response = await clickUpService.chatService.getDirectMessages(
+      workspace_id,
+    );
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(response, null, 2),
+        },
+      ],
+      structuredContent: { conversations: response.conversations || [] },
+    };
+  } catch (error) {
+    logger.error(`Error in ${getDirectMessagesTool.name}:`, error);
+    throw error instanceof Error
+      ? error
+      : new Error("Failed to get direct messages");
+  }
+}
+
+export async function handleGetConversationMessages(
+  clickUpService: ClickUpService,
+  args: Record<string, unknown>,
+) {
+  const { workspace_id, user_id, limit, offset } = args as {
+    workspace_id: string;
+    user_id: string;
+    limit?: number;
+    offset?: number;
+  };
+
+  if (!workspace_id || typeof workspace_id !== "string") {
+    throw new Error("Workspace ID is required and must be a string.");
+  }
+  if (!user_id || typeof user_id !== "string") {
+    throw new Error("User ID is required and must be a string.");
+  }
+
+  const pagination: any = {};
+  if (limit !== undefined) pagination.limit = limit;
+  if (offset !== undefined) pagination.offset = offset;
+
+  logger.info(`Handling tool call: ${getConversationMessagesTool.name}`);
+  try {
+    const response = await clickUpService.chatService.getConversationMessages(
+      workspace_id,
+      user_id,
+      pagination,
+    );
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(response, null, 2),
+        },
+      ],
+      structuredContent: { messages: response.messages || [] },
+    };
+  } catch (error) {
+    logger.error(`Error in ${getConversationMessagesTool.name}:`, error);
+    throw error instanceof Error
+      ? error
+      : new Error("Failed to get conversation messages");
   }
 }
 

@@ -290,6 +290,61 @@ export class ChatService {
 
   // Direct Message Operations
 
+  async getDirectMessages(workspaceId: string): Promise<any> {
+    logger.debug(`Getting direct message conversations for workspace ${workspaceId}`);
+    try {
+      const response = await this.client.get<any>(
+        `/v3/workspaces/${workspaceId}/chat/channels/direct_message`,
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        logger.error(`Axios error getting direct messages: ${error.message}`, {
+          status: error.response?.status,
+          data: error.response?.data,
+          url: error.config?.url,
+        });
+      } else if (error instanceof Error) {
+        logger.error(
+          `Generic error getting direct messages: ${error.message}`,
+        );
+      }
+      throw new Error("Failed to get direct messages from ClickUp");
+    }
+  }
+
+  async getConversationMessages(
+    workspaceId: string,
+    userId: string,
+    pagination?: any,
+  ): Promise<any> {
+    logger.debug(
+      `Getting conversation messages with user ${userId} in workspace ${workspaceId}`,
+    );
+    try {
+      const params =
+        pagination && Object.keys(pagination).length > 0 ? pagination : undefined;
+      const response = await this.client.get<any>(
+        `/v3/workspaces/${workspaceId}/chat/channels/direct_message/${userId}`,
+        { params },
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        logger.error(`Axios error getting conversation messages: ${error.message}`, {
+          status: error.response?.status,
+          data: error.response?.data,
+          url: error.config?.url,
+        });
+      } else if (error instanceof Error) {
+        logger.error(
+          `Generic error getting conversation messages: ${error.message}`,
+        );
+      }
+      throw new Error("Failed to get conversation messages from ClickUp");
+    }
+  }
+
   async createDirectMessage(workspaceId: string, dmData: any): Promise<any> {
     logger.debug(`Creating direct message in workspace ${workspaceId}`);
     try {

@@ -186,6 +186,8 @@ import {
   getMessagesTool,
   updateMessageTool,
   deleteMessageTool,
+  getDirectMessagesTool,
+  getConversationMessagesTool,
   createDirectMessageTool,
   createMessageReactionTool,
   getMessageReactionsTool,
@@ -204,6 +206,8 @@ import {
   handleGetMessages,
   handleUpdateMessage,
   handleDeleteMessage,
+  handleGetDirectMessages,
+  handleGetConversationMessages,
   handleCreateDirectMessage,
   handleCreateMessageReaction,
   handleGetMessageReactions,
@@ -317,6 +321,8 @@ async function main() {
       getMessagesTool,
       updateMessageTool,
       deleteMessageTool,
+      getDirectMessagesTool,
+      getConversationMessagesTool,
       createDirectMessageTool,
       createMessageReactionTool,
       getMessageReactionsTool,
@@ -498,6 +504,10 @@ async function main() {
               return await handleUpdateMessage(clickUpService, args);
             case deleteMessageTool.name:
               return await handleDeleteMessage(clickUpService, args);
+            case getDirectMessagesTool.name:
+              return await handleGetDirectMessages(clickUpService, args);
+            case getConversationMessagesTool.name:
+              return await handleGetConversationMessages(clickUpService, args);
             case createDirectMessageTool.name:
               return await handleCreateDirectMessage(clickUpService, args);
             case createMessageReactionTool.name:
