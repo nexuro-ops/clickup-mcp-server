@@ -48,11 +48,15 @@ The clickup-mcp-server has been successfully restored and is now fully functiona
 
 ## Current Status
 
-### Server Functionality: ✅ OPERATIONAL
+### Server Functionality: ✅ OPERATIONAL & CONNECTED
 ```
 [2026-01-08T01:55:52.544Z] INFO: Starting ClickUp MCP Server...
 [2026-01-08T01:55:52.546Z] INFO: ClickUpService initialized with all resource services.
 [2026-01-08T01:55:52.558Z] INFO: ClickUp MCP Server started successfully and listening via Stdio.
+
+Claude Code MCP Status: ✓ Connected
+Command: node /home/fedora/nexuro/clickup-mcp-server/dist/index.js
+Transport: stdio
 ```
 
 ### Available Tools: ✅ 80+ MCP Tools
@@ -106,6 +110,8 @@ docker-compose up --build
 
 ## Recent Commits
 ```
+dabe2c2 fix: await server.connect() promise to keep MCP server running (CRITICAL)
+c714eca docs: add comprehensive restoration summary
 191a032 docs: add .env.local.example setup template and update pre-commit hook
 4d543e1 fix: add tools capability to MCP Server initialization
 73ae748 fix: restore functionality and security improvements
@@ -182,5 +188,15 @@ For issues:
 
 ---
 
-**Restoration Date**: 2026-01-08  
-**Status**: ✅ COMPLETE AND OPERATIONAL
+## Critical Fix: Server.connect() Promise
+
+The MCP server was failing to connect because `server.connect(transport)` returns a Promise that must be awaited. Without awaiting this promise, the server process would exit immediately after the connection call, preventing the stdio transport from staying alive.
+
+**The Fix**: Changed `server.connect(transport)` to `await server.connect(transport)` in src/index.ts line 549.
+
+This single-line fix resolved the "Failed to connect" error that was preventing Claude Code from connecting to the MCP server.
+
+---
+
+**Restoration Date**: 2026-01-08
+**Status**: ✅ COMPLETE AND OPERATIONAL - MCP Server Connected to Claude Code
