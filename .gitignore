@@ -20,6 +20,10 @@ coverage/
 .env.production
 .env.integration
 
+# Secrets and sensitive data
+data/
+*.key
+
 # Logs
 logs/
 *.log
