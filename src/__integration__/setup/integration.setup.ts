@@ -8,10 +8,9 @@ dotenv.config({
 
 // Configuration globale pour les tests d'intégration
 export const INTEGRATION_CONFIG = {
-  // Token ClickUp pour les tests
+  // Token ClickUp pour les tests - MUST be provided via environment variables
   clickupToken: process.env.CLICKUP_PERSONAL_TOKEN_INTEGRATION ||
-                process.env.CLICKUP_PERSONAL_TOKEN ||
-                "<EXPOSED_API_KEY_REMOVED>",
+                process.env.CLICKUP_PERSONAL_TOKEN,
   
   // Préfixe pour identifier les entités de test
   testPrefix: "TEST_MCP_",
