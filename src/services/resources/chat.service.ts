@@ -11,12 +11,14 @@ export class ChatService {
   // Channel Operations
 
   async getChannels(workspaceId: string): Promise<any> {
-    logger.debug(`Getting channels for workspace ${workspaceId}`);
     try {
       const response = await this.client.get<any>(
         `/v3/workspaces/${workspaceId}/chat/channels`,
       );
-      return response.data;
+      // API returns { data: [...], next_cursor: "" } structure
+      // Normalize to { channels: [...] } for consistency
+      const channels = response.data.data || [];
+      return { channels };
     } catch (error) {
       if (axios.isAxiosError(error)) {
         logger.error(`Axios error getting channels: ${error.message}`, {
@@ -297,9 +299,14 @@ export class ChatService {
       const response = await this.client.get<any>(
         `/v3/workspaces/${workspaceId}/chat/channels`,
       );
+      // API returns { data: [...], next_cursor: "" } structure
+      const allChannels = response.data.data || [];
       // Filter for direct message channels
-      const allChannels = response.data.channels || [];
-      const directMessages = allChannels.filter((channel: any) => channel.name?.startsWith('@') || channel.is_direct_message === true);
+      const directMessages = allChannels.filter((channel: any) =>
+        channel.type === 'DM' ||
+        channel.name?.startsWith('@') ||
+        channel.is_direct_message === true
+      );
       return { channels: directMessages };
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -319,20 +326,22 @@ export class ChatService {
 
   async getConversationMessages(
     workspaceId: string,
-    userId: string,
+    channelId: string,
     pagination?: any,
   ): Promise<any> {
     logger.debug(
-      `Getting conversation messages with user ${userId} in workspace ${workspaceId}`,
+      `Getting conversation messages for channel ${channelId} in workspace ${workspaceId}`,
     );
     try {
       const params =
         pagination && Object.keys(pagination).length > 0 ? pagination : undefined;
       const response = await this.client.get<any>(
-        `/v3/workspaces/${workspaceId}/chat/channels/direct_message/${userId}`,
+        `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages`,
         { params },
       );
-      return response.data;
+      // API returns { data: [...], next_cursor: "" } structure
+      const messages = response.data.data || [];
+      return { messages };
     } catch (error) {
       if (axios.isAxiosError(error)) {
         logger.error(`Axios error getting conversation messages: ${error.message}`, {

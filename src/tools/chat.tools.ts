@@ -403,7 +403,7 @@ export const getDirectMessagesTool: Tool = {
 
 export const getConversationMessagesTool: Tool = {
   name: "clickup_get_conversation_messages",
-  description: "Get messages from a direct message conversation with a specific user",
+  description: "Get messages from a direct message conversation channel",
   inputSchema: {
     type: "object",
     properties: {
@@ -411,9 +411,9 @@ export const getConversationMessagesTool: Tool = {
         type: "string",
         description: "The unique identifier of the workspace.",
       },
-      user_id: {
+      channel_id: {
         type: "string",
-        description: "The unique identifier of the user in the conversation.",
+        description: "The unique identifier of the direct message channel.",
       },
       limit: {
         type: "number",
@@ -424,7 +424,7 @@ export const getConversationMessagesTool: Tool = {
         description: "Optional: Offset for pagination (default: 0).",
       },
     },
-    required: ["workspace_id", "user_id"],
+    required: ["workspace_id", "channel_id"],
   },
   outputSchema: {
     type: "object",
@@ -437,7 +437,7 @@ export const getConversationMessagesTool: Tool = {
         },
       },
     },
-    description: "An array of direct message objects.",
+    description: "An array of message objects from the direct message conversation.",
   },
 };
 
@@ -678,15 +678,20 @@ export async function handleGetChannels(
   clickUpService: ClickUpService,
   args: Record<string, unknown>,
 ) {
+  console.error("@@@ handleGetChannels called @@@");
   const { workspace_id } = args as { workspace_id: string };
 
   if (!workspace_id || typeof workspace_id !== "string") {
     throw new Error("Workspace ID is required and must be a string.");
   }
 
-  logger.info(`Handling tool call: ${getChannelsTool.name}`);
+  console.error(`@@@ workspace_id: ${workspace_id}`);
+  logger.info(`[HANDLER] Handling tool call: ${getChannelsTool.name}`);
   try {
+    logger.info(`[HANDLER] Calling chatService.getChannels with workspace_id: ${workspace_id}`);
     const response = await clickUpService.chatService.getChannels(workspace_id);
+    console.error(`@@@ Got response: ${JSON.stringify(response)}`);
+    logger.info(`[HANDLER] Got response: ${JSON.stringify(response)}`);
     return {
       content: [
         {
@@ -697,7 +702,8 @@ export async function handleGetChannels(
       structuredContent: { channels: response.channels || [] },
     };
   } catch (error) {
-    logger.error(`Error in ${getChannelsTool.name}:`, error);
+    console.error(`@@@ Error: ${error}`);
+    logger.error(`[HANDLER] Error in ${getChannelsTool.name}:`, error);
     throw error instanceof Error ? error : new Error("Failed to get channels");
   }
 }
@@ -1164,9 +1170,9 @@ export async function handleGetConversationMessages(
   clickUpService: ClickUpService,
   args: Record<string, unknown>,
 ) {
-  const { workspace_id, user_id, limit, offset } = args as {
+  const { workspace_id, channel_id, limit, offset } = args as {
     workspace_id: string;
-    user_id: string;
+    channel_id: string;
     limit?: number;
     offset?: number;
   };
@@ -1174,8 +1180,8 @@ export async function handleGetConversationMessages(
   if (!workspace_id || typeof workspace_id !== "string") {
     throw new Error("Workspace ID is required and must be a string.");
   }
-  if (!user_id || typeof user_id !== "string") {
-    throw new Error("User ID is required and must be a string.");
+  if (!channel_id || typeof channel_id !== "string") {
+    throw new Error("Channel ID is required and must be a string.");
   }
 
   const pagination: any = {};
@@ -1186,7 +1192,7 @@ export async function handleGetConversationMessages(
   try {
     const response = await clickUpService.chatService.getConversationMessages(
       workspace_id,
-      user_id,
+      channel_id,
       pagination,
     );
     return {
@@ -1401,7 +1407,7 @@ export async function handleCreateReply(
     const response = await clickUpService.chatService.createReply(
       workspace_id,
       message_id,
-      { text },
+      { content: text },
     );
     return {
       content: [
