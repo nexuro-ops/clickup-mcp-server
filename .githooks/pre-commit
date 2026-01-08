@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Pre-commit hook to prevent committing secrets
+# This hook checks for common API key patterns
+
+echo "🔒 Checking for exposed secrets..."
+
+# Check staged files for secret patterns
+if git diff --cached -z | grep -aP 'pk_[0-9a-zA-Z_]{30,}|sk_[0-9a-zA-Z_]{30,}'; then
+  echo ""
+  echo "❌ SECURITY ALERT: Potential API key detected in staged changes!"
+  echo "This file contains patterns matching API keys."
+  echo ""
+  echo "DO NOT commit this change. Remove the secret and try again:"
+  echo "1. git reset (unstage files)"
+  echo "2. Remove the secret from the file"
+  echo "3. Add only safe changes: git add <file>"
+  echo "4. Commit again: git commit"
+  echo ""
+  echo "To bypass (NOT RECOMMENDED): git commit --no-verify"
+  echo ""
+  exit 1
+fi
+
+# Check if trying to commit .env files (except .env.*.example files)
+if git diff --cached --name-only | grep -E '^\.env' | grep -v '\.env\..*\.example'; then
+  echo ""
+  echo "❌ SECURITY ALERT: Attempting to commit .env file!"
+  echo "Environment files should NEVER be committed."
+  echo "Exception: .env.*.example files are allowed as templates."
+  echo ""
+  exit 1
+fi
+
+echo "✅ No secrets detected. Proceeding with commit."
+exit 0

@@ -20,6 +20,10 @@ coverage/
 .env.production
 .env.integration
 
+# Secrets and sensitive data
+data/
+*.key
+
 # Logs
 logs/
 *.log
@@ -30,6 +34,7 @@ yarn-error.log*
 # IDE
 .idea/
 .vscode/
+.cursor/
 *.swp
 *.swo
 .DS_Store

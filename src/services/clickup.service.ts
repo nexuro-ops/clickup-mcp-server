@@ -96,22 +96,30 @@ export class ClickUpService {
       );
     }
 
+    // Log token setup
+    logger.info(`Initializing ClickUp client with baseURL: ${config.clickUpApiUrl}`);
+    logger.info(`Token configured: ${this.personalToken ? 'YES' : 'NO'}`);
+    if (this.personalToken) {
+      logger.info(`Token starts with: ${this.personalToken.substring(0, 10)}...`);
+    }
+
     this.client = axios.create({
       // Use the specific API URL from the refactored config
       baseURL: config.clickUpApiUrl,
       headers: {
         "Content-Type": "application/json",
+        "Authorization": this.personalToken,
       },
     });
 
     // Add REQUEST interceptor for Authorization header
     this.client.interceptors.request.use(
       (axiosConfig) => {
-        // Add Authorization header using the stored personal token
-        axiosConfig.headers.Authorization = `${this.personalToken}`;
-        // It seems ClickUp API uses the token directly, not "Bearer " prefix for personal tokens
-        // axiosConfig.headers.Authorization = `Bearer ${this.personalToken}`;
-        logger.debug("Added Authorization header to ClickUp request.");
+        // Ensure Authorization header is set
+        if (!axiosConfig.headers.Authorization) {
+          axiosConfig.headers.Authorization = this.personalToken;
+        }
+        logger.debug(`Request to ${axiosConfig.url} with auth header set`);
         return axiosConfig;
       },
       (error) => {

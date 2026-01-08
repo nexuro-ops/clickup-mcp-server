@@ -11,12 +11,14 @@ export class ChatService {
   // Channel Operations
 
   async getChannels(workspaceId: string): Promise<any> {
-    logger.debug(`Getting channels for workspace ${workspaceId}`);
     try {
       const response = await this.client.get<any>(
         `/v3/workspaces/${workspaceId}/chat/channels`,
       );
-      return response.data;
+      // API returns { data: [...], next_cursor: "" } structure
+      // Normalize to { channels: [...] } for consistency
+      const channels = response.data.data || [];
+      return { channels };
     } catch (error) {
       if (axios.isAxiosError(error)) {
         logger.error(`Axios error getting channels: ${error.message}`, {
@@ -289,6 +291,72 @@ export class ChatService {
   }
 
   // Direct Message Operations
+
+  async getDirectMessages(workspaceId: string): Promise<any> {
+    logger.debug(`Getting direct message conversations for workspace ${workspaceId}`);
+    try {
+      // Direct messages are returned as part of the regular channels list
+      const response = await this.client.get<any>(
+        `/v3/workspaces/${workspaceId}/chat/channels`,
+      );
+      // API returns { data: [...], next_cursor: "" } structure
+      const allChannels = response.data.data || [];
+      // Filter for direct message channels
+      const directMessages = allChannels.filter((channel: any) =>
+        channel.type === 'DM' ||
+        channel.name?.startsWith('@') ||
+        channel.is_direct_message === true
+      );
+      return { channels: directMessages };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        logger.error(`Axios error getting direct messages: ${error.message}`, {
+          status: error.response?.status,
+          data: error.response?.data,
+          url: error.config?.url,
+        });
+      } else if (error instanceof Error) {
+        logger.error(
+          `Generic error getting direct messages: ${error.message}`,
+        );
+      }
+      throw new Error("Failed to get direct messages from ClickUp");
+    }
+  }
+
+  async getConversationMessages(
+    workspaceId: string,
+    channelId: string,
+    pagination?: any,
+  ): Promise<any> {
+    logger.debug(
+      `Getting conversation messages for channel ${channelId} in workspace ${workspaceId}`,
+    );
+    try {
+      const params =
+        pagination && Object.keys(pagination).length > 0 ? pagination : undefined;
+      const response = await this.client.get<any>(
+        `/v3/workspaces/${workspaceId}/chat/channels/${channelId}/messages`,
+        { params },
+      );
+      // API returns { data: [...], next_cursor: "" } structure
+      const messages = response.data.data || [];
+      return { messages };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        logger.error(`Axios error getting conversation messages: ${error.message}`, {
+          status: error.response?.status,
+          data: error.response?.data,
+          url: error.config?.url,
+        });
+      } else if (error instanceof Error) {
+        logger.error(
+          `Generic error getting conversation messages: ${error.message}`,
+        );
+      }
+      throw new Error("Failed to get conversation messages from ClickUp");
+    }
+  }
 
   async createDirectMessage(workspaceId: string, dmData: any): Promise<any> {
     logger.debug(`Creating direct message in workspace ${workspaceId}`);

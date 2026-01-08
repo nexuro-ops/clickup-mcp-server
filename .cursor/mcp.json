@@ -3,10 +3,11 @@
     "clickup_local_dev": {
       "command": "node",
       "args": [
-        "/home/nazruden/Projects/MCP/clickup-mcp-server/dist/index.js"
+        "/home/fedora/nexuro/clickup-mcp-server/dist/index.js"
       ],
       "env": {
-        "CLICKUP_PERSONAL_TOKEN": "<EXPOSED_API_KEY_REMOVED>"
+        "CLICKUP_PERSONAL_TOKEN": "YOUR_CLICKUP_API_TOKEN_HERE",
+        "LOG_LEVEL": "info"
       }
     }
   }

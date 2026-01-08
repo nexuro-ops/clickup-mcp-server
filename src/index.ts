@@ -186,6 +186,8 @@ import {
   getMessagesTool,
   updateMessageTool,
   deleteMessageTool,
+  getDirectMessagesTool,
+  getConversationMessagesTool,
   createDirectMessageTool,
   createMessageReactionTool,
   getMessageReactionsTool,
@@ -204,6 +206,8 @@ import {
   handleGetMessages,
   handleUpdateMessage,
   handleDeleteMessage,
+  handleGetDirectMessages,
+  handleGetConversationMessages,
   handleCreateDirectMessage,
   handleCreateMessageReaction,
   handleGetMessageReactions,
@@ -317,6 +321,8 @@ async function main() {
       getMessagesTool,
       updateMessageTool,
       deleteMessageTool,
+      getDirectMessagesTool,
+      getConversationMessagesTool,
       createDirectMessageTool,
       createMessageReactionTool,
       getMessageReactionsTool,
@@ -503,6 +509,10 @@ async function main() {
               return await handleUpdateMessage(clickUpService, args);
             case deleteMessageTool.name:
               return await handleDeleteMessage(clickUpService, args);
+            case getDirectMessagesTool.name:
+              return await handleGetDirectMessages(clickUpService, args);
+            case getConversationMessagesTool.name:
+              return await handleGetConversationMessages(clickUpService, args);
             case createDirectMessageTool.name:
               return await handleCreateDirectMessage(clickUpService, args);
             case createMessageReactionTool.name:
@@ -536,7 +546,7 @@ async function main() {
 
     // Explicitly create and connect the Stdio transport
     const transport = new StdioServerTransport();
-    server.connect(transport);
+    await server.connect(transport);
     logger.info(
       "ClickUp MCP Server started successfully and listening via Stdio.",
     );
