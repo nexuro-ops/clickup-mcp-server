@@ -293,10 +293,14 @@ export class ChatService {
   async getDirectMessages(workspaceId: string): Promise<any> {
     logger.debug(`Getting direct message conversations for workspace ${workspaceId}`);
     try {
+      // Direct messages are returned as part of the regular channels list
       const response = await this.client.get<any>(
-        `/v3/workspaces/${workspaceId}/chat/channels/direct_message`,
+        `/v3/workspaces/${workspaceId}/chat/channels`,
       );
-      return response.data;
+      // Filter for direct message channels
+      const allChannels = response.data.channels || [];
+      const directMessages = allChannels.filter((channel: any) => channel.name?.startsWith('@') || channel.is_direct_message === true);
+      return { channels: directMessages };
     } catch (error) {
       if (axios.isAxiosError(error)) {
         logger.error(`Axios error getting direct messages: ${error.message}`, {

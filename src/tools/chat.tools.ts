@@ -1150,7 +1150,7 @@ export async function handleGetDirectMessages(
           text: JSON.stringify(response, null, 2),
         },
       ],
-      structuredContent: { conversations: response.conversations || [] },
+      structuredContent: { conversations: response.channels || [] },
     };
   } catch (error) {
     logger.error(`Error in ${getDirectMessagesTool.name}:`, error);
