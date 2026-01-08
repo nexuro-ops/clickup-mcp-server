@@ -546,7 +546,7 @@ async function main() {
 
     // Explicitly create and connect the Stdio transport
     const transport = new StdioServerTransport();
-    server.connect(transport);
+    await server.connect(transport);
     logger.info(
       "ClickUp MCP Server started successfully and listening via Stdio.",
     );
